@@ -7,10 +7,14 @@ authors = [
     { name = "Truls Edvardsen Aarønes", email = "github.elude602@passmail.net" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pandas>=3.0.6",
+    "plotly>=7.1.0",
+    "soccerdata>=1.9.1",
+]
 
 [project.scripts]
-football-urn-model = "football_urn_model:main"
+football-urn-model = "football_urn_model.shot_counts:main"
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]
