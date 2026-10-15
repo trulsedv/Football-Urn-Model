@@ -1,0 +1,17 @@
+[project]
+name = "football-urn-model"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Truls Edvardsen Aarønes", email = "github.elude602@passmail.net" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+football-urn-model = "football_urn_model:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
