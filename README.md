@@ -9,9 +9,10 @@ See `Football Urn Model — Design Document.md` for the current (draft) design.
 
 ```bash
 uv sync
-uv run football-urn-model
+uv run shot-counts    # analysis 1: shots per match vs skill difference
+uv run shot-quality   # analysis 2: xG per shot vs skill difference
 ```
 
-This fetches the Premier League 2025/26 season from Understat (cached in `~/soccerdata` after the first run), prints
-shot-count statistics per bin of d = home final points − away final points, and writes
-`output/shot_counts_by_d.csv` and `output/shot_counts_by_d.html` (interactive plotly heatmaps of P(k shots | d)).
+Both fetch the Premier League 2025/26 season from Understat (cached in `~/soccerdata` after the first run), print a
+summary table, and write a CSV and an interactive plotly HTML page to `output/`. Skill difference is measured as
+d = final points of one team − final points of the other.

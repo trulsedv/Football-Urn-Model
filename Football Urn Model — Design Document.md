@@ -156,14 +156,15 @@ Here s is shots in that match. Averaging H over all 190 pairs gives the home eff
 
 5. **Sanity check.** Total xG over the season should be close to total goals, confirming xG behaves as a probability.
 
-**Results so far** (Premier League 2025/26, Understat, own goals excluded; code in `src/football_urn_model/shot_counts.py`):
+**Results so far** (Premier League 2025/26, Understat, own goals excluded; code in `src/football_urn_model/shot_counts.py` and `shot_quality.py`):
 
 - **Analysis 1 — shot counts vs d. Conclusion:** the total number of shots in a match varies randomly around ~25 and does not depend on d. The skill difference decides how those shots are split: the better team gets the larger share (home shots rise from ~9 at d ≈ −40 to ~17 at d ≈ +30, away shots fall from ~14 to ~8). Home teams shoot more at equal skill (~14 vs ~10 at d ≈ 0). There are many ways to model the split, coupled or not; this is left open, and no more shot-count analysis is planned for now.
+- **Analysis 2 — shot quality vs d. Conclusion:** better teams get better chances, and the whole xG distribution shifts, not only its mean. Binning shots (penalties excluded) by the shooting team's points advantage, from < −30 to > 30: mean xG per shot rises from 0.101 to 0.131, every quantile rises by roughly 20–35% (median 0.054 → 0.066, 90th percentile 0.33 → 0.41), and the share of shots with xG > 0.3 goes from 11% to 15.5%. The effect is much smaller than for shot counts (a team's shot share roughly doubles across d, xG per shot rises by about a third), so most skill information is in how many shots a team gets, and some is in how good they are. Caveats: game state (a leading team may get better chances on the counter), home and away mixed, and final points as a noisy skill proxy.
 
 ## Open design decisions
 
 - [x] **One bowl or two per team?** The current draw rule uses one bowl, so attack and defence are the same skill. Separate attack and defence bowls are more realistic but double the parameters. Decided: one skill bowl per team.
-- [ ] **Should shot quality depend on skill?** If not, xG values carry no information about red balls, only shot counts do. Letting better teams draw from a better f(x) makes xG informative but adds parameters.
+- [ ] **Should shot quality depend on skill?** If not, xG values carry no information about red balls, only shot counts do. Letting better teams draw from a better f(x) makes xG informative but adds parameters. Data (analysis 2): the whole xG distribution shifts with skill, so the data supports a skill-dependent f(x).
 - [ ] **Per-shot xG or match totals?** Per-shot data gives the exact likelihood above. Match totals require approximating the distribution of summed xG.
 - [x] **Home advantage:** ignore, or add extra red balls for the home team? Decided: the home team gets extra matchday red balls, a parameter to calibrate.
 - [x] **Game state:** teams that lead tend to shoot less. Ignore in version 1, or let p change with the score? Decided: ignore in version 1; every phase has the same probabilities regardless of score.

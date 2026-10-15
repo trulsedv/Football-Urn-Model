@@ -4,8 +4,9 @@ from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
-import soccerdata as sd
 from plotly.subplots import make_subplots
+
+from football_urn_model.data import load_season
 
 
 def main() -> None:
@@ -27,21 +28,8 @@ def main() -> None:
 
 
 def load_matches(season: str) -> pd.DataFrame:
-    understat = sd.Understat(leagues="ENG-Premier League", seasons=season)
-    schedule = understat.read_schedule().reset_index()
-    shots = understat.read_shot_events().reset_index()
-
-    shots = shots[shots["result"] != "Own Goal"]
+    schedule, shots = load_season(season)
     shot_counts = shots.groupby(["game_id", "team_id"]).size()
-
-    draw = schedule["home_goals"] == schedule["away_goals"]
-    home_points = 3 * (schedule["home_goals"] > schedule["away_goals"]) + draw
-    away_points = 3 * (schedule["away_goals"] > schedule["home_goals"]) + draw
-    points_per_venue = [
-        home_points.groupby(schedule["home_team"]).sum(),
-        away_points.groupby(schedule["away_team"]).sum(),
-    ]
-    final_points = pd.concat(points_per_venue).groupby(level=0).sum()
 
     # Teams without a shot in a match have no rows in the shot data, so they get 0.
     home_keys = pd.MultiIndex.from_arrays([schedule["game_id"], schedule["home_team_id"]])
@@ -52,7 +40,7 @@ def load_matches(season: str) -> pd.DataFrame:
             "away_team": schedule["away_team"],
             "home_shots": shot_counts.reindex(home_keys, fill_value=0).to_numpy(),
             "away_shots": shot_counts.reindex(away_keys, fill_value=0).to_numpy(),
-            "d": (final_points[schedule["home_team"]].to_numpy() - final_points[schedule["away_team"]].to_numpy()),
+            "d": schedule["d"],
         },
     )
 

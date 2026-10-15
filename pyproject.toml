@@ -14,7 +14,8 @@ dependencies = [
 ]
 
 [project.scripts]
-football-urn-model = "football_urn_model.shot_counts:main"
+shot-counts = "football_urn_model.shot_counts:main"
+shot-quality = "football_urn_model.shot_quality:main"
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]
