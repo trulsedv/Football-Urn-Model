@@ -160,6 +160,18 @@ Here s is shots in that match. Averaging H over all 190 pairs gives the home eff
 
 - **Analysis 1 — shot counts vs d. Conclusion:** the total number of shots in a match varies randomly around ~25 and does not depend on d. The skill difference decides how those shots are split: the better team gets the larger share (home shots rise from ~9 at d ≈ −40 to ~17 at d ≈ +30, away shots fall from ~14 to ~8). Home teams shoot more at equal skill (~14 vs ~10 at d ≈ 0). There are many ways to model the split, coupled or not; this is left open, and no more shot-count analysis is planned for now.
 - **Analysis 2 — shot quality vs d. Conclusion:** better teams get better chances, and the whole xG distribution shifts, not only its mean. Binning shots (penalties excluded) by the shooting team's points advantage, from < −30 to > 30: mean xG per shot rises from 0.101 to 0.131, every quantile rises by roughly 20–35% (median 0.054 → 0.066, 90th percentile 0.33 → 0.41), and the share of shots with xG > 0.3 goes from 11% to 15.5%. The effect is much smaller than for shot counts (a team's shot share roughly doubles across d, xG per shot rises by about a third), so most skill information is in how many shots a team gets, and some is in how good they are. Caveats: game state (a leading team may get better chances on the counter), home and away mixed, and final points as a noisy skill proxy.
+- **Analysis 5 — sanity check, xG vs goals. Conclusion: fails.** Understat's xG is too high for 2025/26. Non-penalty shots: 1,114 xG but 927 goals (17% fewer). Penalties: 70 xG, 77 goals. Shots with xG between 0.1 and 0.7 convert clearly below their xG (e.g. 0.4–0.7: mean xG 0.52, goal rate 0.39). The reason is unknown; comparing with earlier seasons would show whether it is Understat's model or an unusual season.
+
+## Correcting the xG data
+
+In the model, x is the *true* probability that a shot becomes a goal. A data source's xG is only a measurement of it, so each data source has to be adjusted before it can be used to assess skill differences accurately. Analysis 5 shows this is needed for Understat.
+
+- **Finishing is part of skill.** A better team should not only create more and better chances, it should also convert them better. Understat's xG does not know who shoots or who is in goal, so in the model, chance quality should depend more strongly on skill than Understat's xG does.
+- **The correction has up to three parts:**
+  1. League-wide calibration of the source's xG (the 17% overestimate above), e.g. logit P(goal) = a + b·logit(x).
+  2. A skill effect, so that better teams convert better, e.g. + β·(θ_shooter − θ_opponent). One global β, no extra parameter per team.
+  3. Optionally a small, team-specific residual, heavily shrunk towards zero, since most over- or under-performance is noise.
+- Estimating the correction inside the model, together with skill, keeps its uncertainty in the posterior. Since the correction should be small, a fixed adjustment applied beforehand is also an acceptable approximation.
 
 ## Open design decisions
 
@@ -176,3 +188,4 @@ Here s is shots in that match. Averaging H over all 190 pairs gives the home eff
 - [ ] **Data check — does skill affect shot quality?** Per team and season, collect shots per match and mean xG per shot, and correlate both with a skill proxy (e.g. final table position). The result decides whether f(x) must depend on skill.
 
 * [ ] **Redesign the layer-3 draw rule to depend only on differences.** The current rule gives A a shot with probability p\_A(1 − p\_B), which depends on both values, not only on p\_A − p\_B (goal 5).
+* [ ] **Teams that outperform (or underperform) their xG.** Some teams score more, or concede fewer, goals than their xG says. Layer 4 currently turns every shot into a goal with probability exactly x, so the model has no room for this. The end goal is to account for it; see Correcting the xG data for the current thinking.
