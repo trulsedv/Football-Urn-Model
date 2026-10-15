@@ -1,0 +1,11 @@
+- GENERAL GUIDANCE, NOT LAWS: all the following preferences should be count as general guidance that should be followed unless a good reason can be given.
+- START WITH MAIN FUNCTION: all files should start with a "main" function can quickly be read to understand the logic of the module.
+- MINIMAL CODING: do not implement something for the future. If its not used remove it. Do not generalize if not needed. Do not assume that everything has to be handled.
+- SKIMABLE CODING: the logic of the code should be skimmable. So not too complex lines and clearly readable logic.
+- AVOID IMPORTS IF POSSIBLE: basic packages as json, pandas, numpy etc are fine.
+- AVOID INSTALLS/ADDS IF POSSILBE: basic packages as pandas, numpy etc are fine.
+- AVOID GLOBAL VARIABLE: do not use global variables. Rather use local constants if only used once, or use "settings-functions" that return the settings that would else be global variables.
+- AVOID SHORT FUNCTIONS: avoid very short functions. They may make the lines where they are used more reabable, but they make the file look more complex than it is.
+- USE UV: use uv to manage packages (uv add, uv sync etc.)
+- USE RUFF AND TY: fix all ruff and ty problems. Do not change ruff.toml, and do not ignore problems unless a reason can be given.
+- README: README.md has to at minimum include a consice explaination of how to run the main script with the exact commands.

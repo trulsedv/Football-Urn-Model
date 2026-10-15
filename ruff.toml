@@ -1,0 +1,25 @@
+preview = true
+line-length = 120
+
+[lint]
+select = [
+   "ALL"
+]
+ignore = [
+   "missing-copyright-notice",
+   "print",
+   "p-print",
+   "undocumented-public-class",
+   "undocumented-public-function",
+   "undocumented-public-method",
+   "undocumented-public-module",
+   "undocumented-public-package",
+   "unnecessary-assign",
+]
+
+[lint.pylint]
+#max-locals = 15
+#max-args = 5
+
+[lint.pydocstyle]
+convention = "pep257"
