@@ -3,7 +3,8 @@
 A probabilistic "urn" model of football matches. Each team's skill is a number of red balls in a pool; drawing red balls will create shots with xG and goals. Because every step is an explicit probability, the same model can simulate matches and compute exact likelihoods of how much better one team is than another.
 
 Work in progress: the first step is a data analysis of Premier League shots and xG to guide the model design.
-See `Football Urn Model — Design Document.md` for the current (draft) design.
+See `docs/`: `design.md` (the model), `considerations.md` (why, open questions, future ideas) and
+`data-analysis.md` (the data behind it).
 
 ## Running
 
