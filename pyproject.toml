@@ -18,6 +18,7 @@ dependencies = [
 shot-counts = "football_urn_model.shot_counts:main"
 shot-quality = "football_urn_model.shot_quality:main"
 simulate = "football_urn_model.simulate:main"
+calibrate = "football_urn_model.calibrate:main"
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]

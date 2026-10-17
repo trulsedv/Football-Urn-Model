@@ -1,42 +1,26 @@
-"""Simulate Premier League seasons with the urn model and compare them with the real 2025/26 season."""
+"""The urn model: simulate a Premier League season, phase by phase (see docs/design.md)."""
 
 import numpy as np
 import pandas as pd
 
-from football_urn_model.data import load_season
+from football_urn_model.data import final_points, load_season
 
 
 def main() -> None:
     settings = model_settings()
-    rng = np.random.default_rng(settings["seed"])
-    schedule, shots = load_season("2025")  # Understat season 2025 = 2025/26
+    rng = np.random.default_rng(1)
+    schedule, _ = load_season("2025")  # the real 2025/26 fixture list; Understat season 2025 = 2025/26
+    real_points = final_points(schedule)
+    red_balls = starting_red_balls(real_points, settings)
 
-    # Placeholder skill until the model is fitted: red balls scale linearly with the team's real final points.
-    home_team_final_points = (schedule["points_sum"] + schedule["d"]) // 2
-    final_points = home_team_final_points.groupby(schedule["home_team"]).first().rename_axis("team")
-    scaled = (final_points - final_points.min()) / (final_points.max() - final_points.min())
-    red_balls = (settings["red_min"] + scaled * (settings["red_max"] - settings["red_min"])).round().astype(int)
-
-    shots = shots.merge(schedule[["game_id", "home_team_id"]], on="game_id")
-    real_shots = pd.DataFrame(
-        {
-            "game_id": shots["game_id"],
-            "is_home": shots["team_id"] == shots["home_team_id"],
-            "xg": shots["xg"].astype(float),
-            "is_goal": shots["result"] == "Goal",
-        },
-    )
-    real = describe_season(real_shots, schedule)
-
-    simulated = []
-    for _ in range(settings["seasons"]):
-        simulated_shots, simulated_matches = simulate_season(schedule, red_balls.to_dict(), settings, rng)
-        simulated.append(describe_season(simulated_shots, simulated_matches))
-
-    comparison = pd.DataFrame({"real": real, "simulated (mean)": pd.DataFrame(simulated).mean()})
-    print(f"Red balls per team (of {settings['skill_pool_size']}):\n{red_balls.sort_values().to_string()}\n")
-    print(f"Real 2025/26 vs {settings['seasons']} simulated seasons (real xG is Understat's, uncorrected):")
-    print(comparison.to_string(float_format="{:.3f}".format))
+    shots, matches = simulate_season(schedule, red_balls, settings, rng)
+    table = pd.DataFrame(
+        {"red balls": red_balls, "real points": real_points, "simulated points": final_points(matches)},
+    ).sort_values("simulated points", ascending=False)
+    print(f"One simulated season with the starting settings (red balls of {settings['skill_pool_size']}):\n")
+    print(table.to_string())
+    goals_per_match = (matches["home_goals"] + matches["away_goals"]).mean()
+    print(f"\nShots per match: {len(shots) / len(matches):.2f}, goals per match: {goals_per_match:.2f}")
 
 
 def model_settings() -> dict[str, int]:
@@ -63,9 +47,19 @@ def model_settings() -> dict[str, int]:
         "marked_white": 20,
         "big_chance_marked_red": 8,  # ... and of a big chance
         "big_chance_marked_white": 12,
-        "seasons": 20,
-        "seed": 1,
     }
+
+
+def starting_red_balls(points: pd.Series, settings: dict[str, int]) -> dict[str, int]:
+    """Give each team red balls scaling linearly with its final points, from red_min to red_max.
+
+    Returns:
+        Red balls in the skill pool per team; a starting point for calibration.
+
+    """
+    scaled = (points - points.min()) / (points.max() - points.min())
+    red_balls = settings["red_min"] + scaled * (settings["red_max"] - settings["red_min"])
+    return red_balls.round().astype(int).to_dict()
 
 
 def simulate_season(
@@ -145,6 +139,10 @@ def who_shoots(
     if home_drawn != away_drawn:
         return bool(home_drawn > away_drawn), abs(int(home_drawn) - int(away_drawn))
 
+    if home_red in {0, home_size} and away_red in {0, away_size}:
+        # Both urns hold one colour only, so the tie can never be broken: a fair draw decides (an open question).
+        return bool(rng.integers(2) == 0), 0
+
     # Tie: draw one ball each from what is left until the colours differ; if a urn runs empty, put all balls back.
     home_left = [home_red - home_drawn, home_size - draws]
     away_left = [away_red - away_drawn, away_size - draws]
@@ -183,43 +181,3 @@ def shoot(
     # One ball from the shot urn; red is a goal. Unmarked balls then go back into the match urns.
     is_goal = rng.integers(shot_urn_size) < shot_urn_red
     return shot_urn_red / shot_urn_size, bool(is_goal)
-
-
-def describe_season(shots: pd.DataFrame, matches: pd.DataFrame) -> dict[str, float]:
-    """Summary statistics for comparing a simulated season with the real one.
-
-    Returns:
-        Statistic name to value.
-
-    """
-    shot_counts = pd.crosstab(shots["game_id"], shots["is_home"]).reindex(matches["game_id"], fill_value=0)
-    total_shots = shot_counts[True] + shot_counts[False]
-    home_goals, away_goals = matches["home_goals"], matches["away_goals"]
-    home_points = 3 * (home_goals > away_goals) + (home_goals == away_goals)
-    away_points = 3 * (away_goals > home_goals) + (home_goals == away_goals)
-    big_chance_xg = 0.3
-    final_points = (
-        pd
-        .concat(
-            [home_points.groupby(matches["home_team"]).sum(), away_points.groupby(matches["away_team"]).sum()],
-        )
-        .groupby(level=0)
-        .sum()
-    )
-    return {
-        "shots per match": total_shots.mean(),
-        "variance of shots per match": total_shots.var(),
-        "home shots per match": shot_counts[True].mean(),
-        "away shots per match": shot_counts[False].mean(),
-        "goals per match": (home_goals + away_goals).mean(),
-        "home win rate": (home_goals > away_goals).mean(),
-        "draw rate": (home_goals == away_goals).mean(),
-        "0-0 rate": ((home_goals == 0) & (away_goals == 0)).mean(),
-        "mean xG per shot": shots["xg"].mean(),
-        "sd of xG per shot": shots["xg"].std(),
-        "share of shots with xG = 0": (shots["xg"] == 0).mean(),
-        "share of shots with xG > 0.3": (shots["xg"] > big_chance_xg).mean(),
-        "final points, sd": final_points.std(),
-        "final points, max": final_points.max(),
-        "final points, min": final_points.min(),
-    }

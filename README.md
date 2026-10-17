@@ -13,10 +13,12 @@ See `docs/`: `design.md` (the model), `considerations.md` (why, open questions, 
 uv sync
 uv run shot-counts    # analysis 1: shots per match vs skill difference
 uv run shot-quality   # analysis 2: xG per shot vs skill difference
-uv run simulate       # simulate seasons with the urn model and compare with the real season
+uv run simulate       # simulate one season with the starting parameters and print the league table
+uv run calibrate      # fit the parameters to the real season and compare all statistics (~1 minute)
 ```
 
-All three fetch the Premier League 2025/26 season from Understat (cached in `~/soccerdata` after the first run), print a
+All fetch the Premier League 2025/26 season from Understat (cached in `~/soccerdata` after the first run), print a
 summary table. The analyses also write a CSV and an interactive plotly HTML page to `output/`. The model's
-parameters are set in `model_settings()` in `src/football_urn_model/simulate.py`. Skill difference is measured as
+starting parameters are in `model_settings()` in `src/football_urn_model/simulate.py`; what is fitted, and
+against which statistic, is in `fitting_plan()` in `src/football_urn_model/calibrate.py`. Skill difference is measured as
 d = final points of one team − final points of the other.

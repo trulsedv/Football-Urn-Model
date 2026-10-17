@@ -137,6 +137,8 @@ second peak, but within each kind of shot the values are still coarse. Accepted 
 
 ## Open
 
+- **Unbreakable ties in phase 4:** when both match urns hold only one colour (all red or all white), the tie-break
+  can never end. The simulator currently lets a fair draw (one red, one white ball) decide; a proper rule is open.
 - **Form of the xG correction.** Possible parts:
   1. League-wide calibration, e.g. logit P(goal) = a + b·logit(x).
   2. A skill effect: model xG should depend more strongly on skill than Understat's xG does.
