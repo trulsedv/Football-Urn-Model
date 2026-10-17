@@ -30,7 +30,7 @@ comes from the team's own balls, and why model xG should depend more strongly on
 ### Shot quality depends on skill
 
 Analysis 2 shows the whole xG distribution shifts with skill. Without this, xG values would carry no information
-about red balls, only shot counts would. Drawing the xG balls from the team's own match urn (phase 5) makes shot quality
+about red balls, only shot counts would. Drawing the chance balls from the team's own match urn (phase 5) makes shot quality
 depend on skill by construction.
 
 ### The total number of shots comes from a tempo urn
@@ -91,8 +91,8 @@ see "Tempo pool" under Future ideas.
 ## Open
 
 - **Split rule:** redraw or coin flip on same colour.
-- **Where xG balls come from, and how many (o):** the match urn or a separate chance urn. Real xG is mostly
-  below 0.1, which would need match urns of about 10% red if xG balls come from the match urn. With a tempo urn
+- **Where chance balls come from, and how many (c):** the match urn or a separate chance urn. Real xG is mostly
+  below 0.1, which would need match urns of about 10% red if chance balls come from the match urn. With a tempo urn
   for the total, phase 4 no longer needs match urns near 50% red, so this is not ruled out. Hunch: choosing how the balls are drawn in phase 4 (who shoots) may make it possible for the match urn to model both who shoots and the xG accurately. Check against the
   per-shot xG data.
 - **Form of the xG correction.** Possible parts:
@@ -124,13 +124,13 @@ Once the model works, the split could be made to depend only on p_A − p_B, e.g
 
 Not part of this project, perhaps a later one: using Bayesian inference on observations (shots, xG values, goals)
 to get probability distributions over the red balls in every team's skill pool, and predictions from them. The model
-must stay simple enough for this (goals 2 and 4). Notes kept from earlier design work:
+must stay simple enough for this (goal 4). Notes kept from earlier design work:
 
 **Likelihood of one match.** Given matchday strengths, the probability of the observed shots, their xG values and
 the goals is:
 
 ```latex
-L(D \mid k_A, k_B) = \mathrm{Bin}(T;\ n, s/N)\, \mathrm{Bin}(S_A;\ T, q_A) \prod_{j} \mathrm{Hyp}(r_j \mid m, k_{(j)}, o)\, x_j^{G_j} (1 - x_j)^{1 - G_j}
+L(D \mid k_A, k_B) = \mathrm{Bin}(T;\ n, s/N)\, \mathrm{Bin}(S_A;\ T, q_A) \prod_{j} \mathrm{Hyp}(r_j \mid m, k_{(j)}, c)\, x_j^{G_j} (1 - x_j)^{1 - G_j}
 ```
 
 Here k\_(j) is the match-red count of the team that took shot j. Both shot counts and xG values carry information
