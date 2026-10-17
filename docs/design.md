@@ -28,6 +28,8 @@ League seasons. Each team's skill is the number of red balls in its skill pool.
 - k = number of balls drawn: k\_w to decide who shoots, k\_c chance balls drawn by the shooting team, k\_d balls
   drawn by the defending team.
 - n = rounds per match, m\_h = extra red balls for the home team, μ = average number of shots per match.
+- Marked balls: extra balls added to the shot urn, separate numbers of marked red and marked white for ordinary
+  shots and for big chances. A marked red ball counts as red.
 
 ## Model structure
 
@@ -47,14 +49,16 @@ Then, for each of the n rounds in the match:
    If there is a shot:
 
 4. **Who shoots:** each team grabs k\_w balls from its match urn (without replacement). The team with more red
-   balls shoots. If equal, each team draws one more ball at a time until one draws red and the other white. All
-   balls then go back into the match urns.
+   balls shoots. If equal, each team draws one more ball at a time until one draws red and the other white. If the
+   shooting team won by at least a set number of red balls (the big-chance margin), the shot is a big chance. A
+   tie-break win is never a big chance. All balls then go back into the match urns.
 5. **xG** (k\_c and k\_d balls, k\_d < k\_c): the shooting team draws k\_c balls and the defending team k\_d
    balls from their match urns (without replacement). The shooting team removes as many red balls as the defender
-   drew (at most all its own red balls) and places the rest of its balls in a shot urn. The shot urn's red share is
-   the shot's xG.
-6. **Goal or not:** one ball is drawn from the shot urn; red is a goal. All balls then go back into the match
-   urns.
+   drew (at most all its own red balls) and places the rest of its balls in a shot urn, together with the marked
+   balls for its kind of shot (ordinary or big chance). The shot urn's red share, counting marked red as red, is the
+   shot's xG.
+6. **Goal or not:** one ball is drawn from the shot urn; red (or marked red) is a goal. The marked balls are taken
+   out, and the rest go back into the match urns.
 
 Observed: for each shot, the round, the shooting team (home or away), its xG and whether it was a goal.
 

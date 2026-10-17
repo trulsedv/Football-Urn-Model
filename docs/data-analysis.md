@@ -60,7 +60,6 @@ points include the match itself, and points are a noisy measure of skill. Both a
 1. **Total shots per match:** mean ≈ 25 (24.96), variance ≈ 29 (29.46), range 11–42 over 380 matches. The total
    does not depend on the teams' skill, and its distribution should look like the real one.
 2. **Split between the teams:** depends on each team's matchday red balls; the better team gets the larger share.
-3. **xG per shot:** random, with higher values for the better team. Treated as a smooth distribution with one peak
-   (see considerations.md): peak near 0.03, median ≈ 0.06, mean ≈ 0.12, sd ≈ 0.16 (Understat, non-penalty, before
-   correction). The real distribution has a second bump of big chances at 0.3–0.6 (≈ 13% of shots), which is not
-   modelled.
+3. **xG per shot:** random, with higher values for the better team. Two groups: ordinary shots (about 83% between
+   0 and 0.15, peak near 0.03) and big chances (about 13% at 0.3–0.6). Overall median ≈ 0.06, mean ≈ 0.12, sd ≈
+   0.16 (Understat, non-penalty, before correction).

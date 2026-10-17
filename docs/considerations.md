@@ -91,11 +91,28 @@ the shooter's before the shot urn is filled. Considered:
 
 Chance balls come from the match urn, not a separate chance urn.
 
-### The xG distribution is smooth with one peak
+### Two kinds of shots: ordinary and big chances
 
 Real non-penalty xG has two groups: ordinary shots (about 83% between 0 and 0.15, peak near 0.03) and a second bump
-of big chances at 0.3–0.6 (about 13%). We assume a smooth distribution with one peak gives reasonable results, so
-phase 5 should reproduce that, not the second bump.
+of big chances at 0.3–0.6 (about 13%). Shots with xG ≥ 0.2 are only 16% of shots but carry more than half of the
+total xG, so leaving them out would halve the goals. We first assumed one smooth peak; the first simulation (35% of
+shots with xG = 0) made us add big chances now.
+
+A shot is a big chance when the shooting team wins phase 4 by at least a set margin of red balls. This ties big
+chances to skill: in the data, the share of shots with xG > 0.3 rises from 11% for the weakest teams to 15.5% for
+the strongest. Ordinary shots and big chances differ only in their marked balls (below).
+
+### Marked balls in the shot urn (phase 5)
+
+Marked balls are added to the shot urn and taken out again before the other balls go back into the match urn. A
+marked red ball counts as red. They avoid xG = 0 and set each kind of shot's level: marked red gives a floor, marked
+white lowers the level. Caveats:
+
+- Marked white balls lower the spread together with the mean; the drawn red balls still give the variation.
+- With one marked red ball, the spread relative to the mean (sd/mean) stays below about 0.5. Real ordinary shots have
+  0.64, all shots 1.34; the big chances provide the rest.
+- A plain green (marked red) ball alone in a small shot urn gives a floor of about 0.17, far above the real median of
+  0.06; hence the marked white balls.
 
 ### Earlier decisions
 
@@ -115,10 +132,8 @@ see "Tempo pool" under Future ideas.
 
 ### Coarse xG resolution
 
-The spread of xG between shots is set mainly by how many balls are drawn: matching the data's spread (sd/mean ≈ 1.3)
-needs about 5 balls, which makes xG coarse (0, 0.2, 0.4, …) and gives xG = 0 to more than half of the shots. A
-smooth peak near 0.03 would need 30 or more balls, which makes the spread far too small. Accepted for the MVP; a
-second source of variation between shots could fix it later.
+Only a few chance balls are drawn, so xG takes few distinct values. Marked balls removed xG = 0 and big chances add a
+second peak, but within each kind of shot the values are still coarse. Accepted for the MVP.
 
 ## Open
 

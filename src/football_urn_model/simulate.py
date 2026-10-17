@@ -58,6 +58,11 @@ def model_settings() -> dict[str, int]:
         "who_shoots_draws": 3,  # k_w
         "chance_draws": 5,  # k_c
         "defender_draws": 1,  # k_d
+        "big_chance_margin": 2,  # winning phase 4 by at least this many red balls makes the shot a big chance
+        "marked_red": 1,  # marked balls added to the shot urn of an ordinary shot; marked red counts as red
+        "marked_white": 20,
+        "big_chance_marked_red": 8,  # ... and of a big chance
+        "big_chance_marked_white": 12,
         "seasons": 20,
         "seed": 1,
     }
@@ -111,25 +116,34 @@ def simulate_match(
         # Phase 3: one draw from the tempo urn decides whether there is a shot this round.
         if rng.integers(settings["tempo_urn_size"]) >= settings["tempo_urn_red"]:
             continue
-        is_home = home_shoots(urns[True], urns[False], settings["who_shoots_draws"], rng)
+        is_home, margin = who_shoots(urns[True], urns[False], settings["who_shoots_draws"], rng)
+        if margin >= settings["big_chance_margin"]:
+            marked_balls = (settings["big_chance_marked_red"], settings["big_chance_marked_white"])
+        else:
+            marked_balls = (settings["marked_red"], settings["marked_white"])
 
-        xg, is_goal = shoot(urns[is_home], urns[not is_home], settings, rng)
+        xg, is_goal = shoot(urns[is_home], urns[not is_home], marked_balls, settings, rng)
         shots.append({"is_home": is_home, "xg": xg, "is_goal": is_goal})
     return shots
 
 
-def home_shoots(home_urn: tuple[int, int], away_urn: tuple[int, int], draws: int, rng: np.random.Generator) -> bool:
+def who_shoots(
+    home_urn: tuple[int, int],
+    away_urn: tuple[int, int],
+    draws: int,
+    rng: np.random.Generator,
+) -> tuple[bool, int]:
     """Phase 4: both teams grab `draws` balls; more red balls shoots, ties are broken one ball at a time.
 
     Returns:
-        True if the home team shoots.
+        Whether the home team shoots, and the winning margin in red balls (0 when won in a tie-break).
 
     """
     (home_red, home_size), (away_red, away_size) = home_urn, away_urn
     home_drawn = rng.hypergeometric(home_red, home_size - home_red, draws)
     away_drawn = rng.hypergeometric(away_red, away_size - away_red, draws)
     if home_drawn != away_drawn:
-        return bool(home_drawn > away_drawn)
+        return bool(home_drawn > away_drawn), abs(int(home_drawn) - int(away_drawn))
 
     # Tie: draw one ball each from what is left until the colours differ; if a urn runs empty, put all balls back.
     home_left = [home_red - home_drawn, home_size - draws]
@@ -140,7 +154,7 @@ def home_shoots(home_urn: tuple[int, int], away_urn: tuple[int, int], draws: int
         home_is_red = rng.integers(home_left[1]) < home_left[0]
         away_is_red = rng.integers(away_left[1]) < away_left[0]
         if home_is_red != away_is_red:
-            return bool(home_is_red)
+            return bool(home_is_red), 0
         home_left = [home_left[0] - home_is_red, home_left[1] - 1]
         away_left = [away_left[0] - away_is_red, away_left[1] - 1]
 
@@ -148,10 +162,11 @@ def home_shoots(home_urn: tuple[int, int], away_urn: tuple[int, int], draws: int
 def shoot(
     shooter_urn: tuple[int, int],
     defender_urn: tuple[int, int],
+    marked_balls: tuple[int, int],
     settings: dict[str, int],
     rng: np.random.Generator,
 ) -> tuple[float, bool]:
-    """Phases 5 and 6: the defender's red balls cancel red chance balls, then one ball from the shot urn decides.
+    """Phases 5 and 6: the defender's red balls cancel red chance balls, marked balls are added, one ball decides.
 
     Returns:
         The shot's xG (red share of the shot urn) and whether it is a goal.
@@ -161,9 +176,11 @@ def shoot(
     chance_red = rng.hypergeometric(shooter_red, shooter_size - shooter_red, settings["chance_draws"])
     defender_drawn = rng.hypergeometric(defender_red, defender_size - defender_red, settings["defender_draws"])
     cancelled = min(chance_red, defender_drawn)
-    shot_urn_red, shot_urn_size = chance_red - cancelled, settings["chance_draws"] - cancelled
+    marked_red, marked_white = marked_balls
+    shot_urn_red = chance_red - cancelled + marked_red
+    shot_urn_size = settings["chance_draws"] - cancelled + marked_red + marked_white
 
-    # One ball from the shot urn; red is a goal. All balls then go back into the match urns.
+    # One ball from the shot urn; red is a goal. Unmarked balls then go back into the match urns.
     is_goal = rng.integers(shot_urn_size) < shot_urn_red
     return shot_urn_red / shot_urn_size, bool(is_goal)
 
@@ -180,6 +197,7 @@ def describe_season(shots: pd.DataFrame, matches: pd.DataFrame) -> dict[str, flo
     home_goals, away_goals = matches["home_goals"], matches["away_goals"]
     home_points = 3 * (home_goals > away_goals) + (home_goals == away_goals)
     away_points = 3 * (away_goals > home_goals) + (home_goals == away_goals)
+    big_chance_xg = 0.3
     final_points = (
         pd
         .concat(
@@ -200,6 +218,7 @@ def describe_season(shots: pd.DataFrame, matches: pd.DataFrame) -> dict[str, flo
         "mean xG per shot": shots["xg"].mean(),
         "sd of xG per shot": shots["xg"].std(),
         "share of shots with xG = 0": (shots["xg"] == 0).mean(),
+        "share of shots with xG > 0.3": (shots["xg"] > big_chance_xg).mean(),
         "final points, sd": final_points.std(),
         "final points, max": final_points.max(),
         "final points, min": final_points.min(),
