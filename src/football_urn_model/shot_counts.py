@@ -1,4 +1,4 @@
-"""Analysis 1: how shot counts depend on skill difference d (home final points - away final points)."""
+"""Analysis 1: how shot counts depend on skill difference d (home - away final points) and on the points sum."""
 
 from pathlib import Path
 
@@ -26,6 +26,15 @@ def main() -> None:
     plot_landscape(matches, bin_width).write_html(output_dir / "shot_counts_by_d.html")
     print(f"\nWrote {output_dir}/shot_counts_by_d.csv and {output_dir}/shot_counts_by_d.html")
 
+    # Does the total depend on how strong the two teams are together, rather than on their difference?
+    matches["sum_bin"] = (matches["points_sum"] // bin_width) * bin_width
+    total_by_sum = matches.groupby("sum_bin")["total_shots"].agg(["size", "mean", "var"]).reset_index()
+    print(f"\nCorrelation of total shots with d: {matches['total_shots'].corr(matches['d']):.3f}")
+    print(f"Correlation of total shots with points sum: {matches['total_shots'].corr(matches['points_sum']):.3f}\n")
+    print(total_by_sum.to_string(index=False, float_format="{:.2f}".format))
+    total_by_sum.to_csv(output_dir / "total_shots_by_points_sum.csv", index=False)
+    print(f"\nWrote {output_dir}/total_shots_by_points_sum.csv")
+
 
 def load_matches(season: str) -> pd.DataFrame:
     schedule, shots = load_season(season)
@@ -41,6 +50,7 @@ def load_matches(season: str) -> pd.DataFrame:
             "home_shots": shot_counts.reindex(home_keys, fill_value=0).to_numpy(),
             "away_shots": shot_counts.reindex(away_keys, fill_value=0).to_numpy(),
             "d": schedule["d"],
+            "points_sum": schedule["points_sum"],
         },
     )
 

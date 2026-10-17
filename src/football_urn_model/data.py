@@ -8,7 +8,7 @@ def load_season(season: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Fetch matches and shots for one season (Understat season 2025 = 2025/26).
 
     Returns:
-        The schedule with d = home final points - away final points, and all shots except own goals.
+        The schedule with d = home - away final points and points_sum = their sum, and all shots except own goals.
 
     """
     understat = sd.Understat(leagues="ENG-Premier League", seasons=season)
@@ -24,5 +24,8 @@ def load_season(season: str) -> tuple[pd.DataFrame, pd.DataFrame]:
         away_points.groupby(schedule["away_team"]).sum(),
     ]
     final_points = pd.concat(points_per_venue).groupby(level=0).sum()
-    schedule["d"] = final_points[schedule["home_team"]].to_numpy() - final_points[schedule["away_team"]].to_numpy()
+    home_final_points = final_points[schedule["home_team"]].to_numpy()
+    away_final_points = final_points[schedule["away_team"]].to_numpy()
+    schedule["d"] = home_final_points - away_final_points
+    schedule["points_sum"] = home_final_points + away_final_points
     return schedule, shots
