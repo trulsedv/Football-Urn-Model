@@ -72,6 +72,31 @@ infers m\_s with Bayes. If m\_s never changes, the posterior can get as certain 
 matches. If m\_s changes, the observer must widen the posterior between matches with an assumed drift; this
 assumption belongs to the inference, not to the model, and need not equal the rule the simulation used.
 
+### Who shoots: grab k\_w balls, most red wins (phase 4)
+
+Each team grabs k\_w balls from its match urn; the team with more red balls shoots, ties broken one ball at a time.
+k\_w = 1 equals the redraw rule; a larger k\_w gives the better team a bigger share of the shots. Chosen over the
+redraw and coin rules because k\_w gives a knob for how strongly skill decides the split.
+
+### xG: the defender cancels red balls (phase 5)
+
+The xG must depend on the defender too, since the data shows xG rising with the skill *difference*. The shooting
+team draws k\_c chance balls from its match urn and the defender k\_d; the defender's red balls are removed from
+the shooter's before the shot urn is filled. Considered:
+
+- **Defender draws as many balls as the attacker:** about 60% of shots get xG = 0, and mean xG differs by a factor
+  10–30 between strong and weak attackers (data: about 1.3). Rejected.
+- **Defender draws fewer balls (k\_d < k\_c):** skill effect about 1.2–1.5, close to the data. Chosen. Mean xG is
+  roughly the red share × (1 − k\_d/k\_c), so a mean of about 0.1 needs match urns of roughly 10–15% red.
+
+Chance balls come from the match urn, not a separate chance urn.
+
+### The xG distribution is smooth with one peak
+
+Real non-penalty xG has two groups: ordinary shots (about 83% between 0 and 0.15, peak near 0.03) and a second bump
+of big chances at 0.3–0.6 (about 13%). We assume a smooth distribution with one peak gives reasonable results, so
+phase 5 should reproduce that, not the second bump.
+
 ### Earlier decisions
 
 - **One skill urn per team:** attack and defence are the same skill. Separate urns would be more realistic but
@@ -88,13 +113,15 @@ A fixed tempo urn gives a binomial total with variance μ(1 − μ/n), always be
 variance 29.5; the excess is real but modest (dispersion test z ≈ 2.5 over 380 matches). Accepted for simplicity;
 see "Tempo pool" under Future ideas.
 
+### Coarse xG resolution
+
+The spread of xG between shots is set mainly by how many balls are drawn: matching the data's spread (sd/mean ≈ 1.3)
+needs about 5 balls, which makes xG coarse (0, 0.2, 0.4, …) and gives xG = 0 to more than half of the shots. A
+smooth peak near 0.03 would need 30 or more balls, which makes the spread far too small. Accepted for the MVP; a
+second source of variation between shots could fix it later.
+
 ## Open
 
-- **Split rule:** redraw or coin flip on same colour.
-- **Where chance balls come from, and how many (k\_c):** the match urn or a separate chance urn. Real xG is mostly
-  below 0.1, which would need match urns of about 10% red if chance balls come from the match urn. With a tempo urn
-  for the total, phase 4 no longer needs match urns near 50% red, so this is not ruled out. Hunch: choosing how the balls are drawn in phase 4 (who shoots) may make it possible for the match urn to model both who shoots and the xG accurately. Check against the
-  per-shot xG data.
 - **Form of the xG correction.** Possible parts:
   1. League-wide calibration, e.g. logit P(goal) = a + b·logit(x).
   2. A skill effect: model xG should depend more strongly on skill than Understat's xG does.
