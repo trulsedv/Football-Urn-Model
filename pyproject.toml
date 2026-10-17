@@ -1,13 +1,14 @@
 [project]
 name = "football-urn-model"
 version = "0.1.0"
-description = "Add your description here"
+description = "A football match model where every random step is a draw of balls from urns."
 readme = "README.md"
 authors = [
     { name = "Truls Edvardsen Aarønes", email = "github.elude602@passmail.net" }
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "numpy>=2.5.4",
     "pandas>=3.0.6",
     "plotly>=7.1.0",
     "soccerdata>=1.9.1",
@@ -16,6 +17,7 @@ dependencies = [
 [project.scripts]
 shot-counts = "football_urn_model.shot_counts:main"
 shot-quality = "football_urn_model.shot_quality:main"
+simulate = "football_urn_model.simulate:main"
 
 [build-system]
 requires = ["uv_build>=0.12.23,<0.13.0"]
