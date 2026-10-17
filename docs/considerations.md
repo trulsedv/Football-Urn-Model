@@ -9,7 +9,7 @@ results are in [data-analysis.md](data-analysis.md).
 ### The model must be physically playable
 
 Every random step is a draw of balls from an urn, so a match could be played with real urns and balls. No step may
-use a fitted function or a continuous distribution. This replaced the earlier layer 4, where xG was drawn from a
+use a fitted function or a continuous distribution. This replaced an earlier version where xG was drawn from a
 fitted distribution f(x).
 
 ### Correcting xG data is outside the model
@@ -17,7 +17,7 @@ fitted distribution f(x).
 A data source's xG comes from its own model and can be biased: Understat's xG is 17% too high for 2025/26
 (analysis 5). Each data source therefore needs its own correction that turns its xG into model xG:
 
-data source → correction → model inference → skill difference
+data source → correction → comparison with simulated data (and, later, inference)
 
 The correction is not part of the model, so it does not have to be playable and may use fitted functions.
 
@@ -30,7 +30,7 @@ comes from the team's own balls, and why model xG should depend more strongly on
 ### Shot quality depends on skill
 
 Analysis 2 shows the whole xG distribution shifts with skill. Without this, xG values would carry no information
-about red balls, only shot counts would. Drawing chance balls from the team's own urn (layer 4) makes shot quality
+about red balls, only shot counts would. Drawing the xG balls from the team's own match urn (phase 5) makes shot quality
 depend on skill by construction.
 
 ### The total number of shots comes from a tempo urn
@@ -41,7 +41,7 @@ difference nor on the sum of the two teams' final points. Options considered:
 - **Combined urn:** pour both match urns together and draw; a red ball is a shot for its owner. Rejected: the
   total then depends on the sum of red balls, so strong pairs of teams would shoot more than weak ones, which the
   data does not show.
-- **Red phases and white phases:** n₁ phases where either team drawing red gives a shot, then n₂ phases where
+- **Red rounds and white rounds:** n₁ rounds where either team drawing red gives a shot, then n₂ rounds where
   either drawing white gives a shot. With n₁ = n₂ the sum of red balls cancels, but a term depending on the product
   remains: expected total n·(1.5 − 2ab), where the urns are ½ + a and ½ + b red. Small if the match urns are near
   50% red (≈ 1.3% at 40–60%), large if they are far from it (≈ 20% at 10–30%). Rejected: it only approximates a
@@ -64,6 +64,14 @@ from their match urns):
   difference, but uses only the match urns.
 - **Coin flip on same colour:** P(A) = ½ + ½(p_A − p_B), so it depends only on the difference, but adds a coin.
 
+### Skill change is a simulation input
+
+Phase 1 is not a random step of the model (this matters mostly for the later inference). Whoever runs the simulation sets how the red balls in each skill pool
+change between matches: not at all, randomly, or by a rule. An observer who only sees shots, xG values and goals
+infers R with Bayes. If R never changes, the posterior can get as certain as you like (e.g. 99.999%) with enough
+matches. If R changes, the observer must widen the posterior between matches with an assumed drift; this
+assumption belongs to the inference, not to the model, and need not equal the rule the simulation used.
+
 ### Earlier decisions
 
 - **One skill urn per team:** attack and defence are the same skill. Separate urns would be more realistic but
@@ -83,9 +91,9 @@ see "Tempo pool" under Future ideas.
 ## Open
 
 - **Split rule:** redraw or coin flip on same colour.
-- **Where chance balls come from, and how many (c):** the match urn or a separate chance urn. Real xG is mostly
-  below 0.1, which would need match urns of about 10% red if chance balls come from the match urn. With a tempo urn
-  for the total, layer 3 no longer needs match urns near 50% red, so this is not ruled out. Check against the
+- **Where xG balls come from, and how many (o):** the match urn or a separate chance urn. Real xG is mostly
+  below 0.1, which would need match urns of about 10% red if xG balls come from the match urn. With a tempo urn
+  for the total, phase 4 no longer needs match urns near 50% red, so this is not ruled out. Hunch: choosing how the balls are drawn in phase 4 (who shoots) may make it possible for the match urn to model both who shoots and the xG accurately. Check against the
   per-shot xG data.
 - **Form of the xG correction.** Possible parts:
   1. League-wide calibration, e.g. logit P(goal) = a + b·logit(x).
@@ -94,19 +102,16 @@ see "Tempo pool" under Future ideas.
      is noise.
 - **Teams that outperform (or underperform) their xG.** Some teams score more, or concede fewer, goals than their
   xG says. The end goal is to account for it, through the correction above.
-- **Per-shot xG or match totals?** Per-shot data gives the exact likelihood. Match totals require approximating the
-  distribution of summed xG.
 - **Pool size M:** 100 is a convenient default; confirm or pick another.
 - **Per-team check of shot quality:** per team and season, correlate shots per match and mean xG per shot with a
   skill proxy (e.g. final table position). Partly answered by analysis 2.
-- **Later:** walk through the one-match likelihood equation together.
 
 ## Future ideas
 
 ### Tempo pool for the tempo urn
 
 To add the missing match-to-match variation in total shots, fill the tempo urn before each match by drawing N balls
-(without replacement) from a larger tempo pool, the same way layer 2 draws match balls from the skill pool.
+(without replacement) from a larger tempo pool, the same way phase 2 fills the match urn from the skill pool.
 
 Example: n = 100 rounds, a tempo pool with 25% red balls, and N ≈ 170 balls drawn for each match gives mean 25 and
 variance ≈ 29.5. The variance of the total is n·Q(1−Q) + n(n−1)·Var(s/N), where Q is the pool's red share.
@@ -114,3 +119,84 @@ variance ≈ 29.5. The variance of the total is n·Q(1−Q) + n(n−1)·Var(s/N)
 ### Split depending only on the difference
 
 Once the model works, the split could be made to depend only on p_A − p_B, e.g. with the coin flip on same colour.
+
+## Future: inference
+
+Not part of this project, perhaps a later one: using Bayesian inference on observations (shots, xG values, goals)
+to get probability distributions over the red balls in every team's skill pool, and predictions from them. The model
+must stay simple enough for this (goals 2 and 4). Notes kept from earlier design work:
+
+**Likelihood of one match.** Given matchday strengths, the probability of the observed shots, their xG values and
+the goals is:
+
+```latex
+L(D \mid k_A, k_B) = \mathrm{Bin}(T;\ n, s/N)\, \mathrm{Bin}(S_A;\ T, q_A) \prod_{j} \mathrm{Hyp}(r_j \mid m, k_{(j)}, o)\, x_j^{G_j} (1 - x_j)^{1 - G_j}
+```
+
+Here k\_(j) is the match-red count of the team that took shot j. Both shot counts and xG values carry information
+about red balls.
+
+### How likely is a red-ball difference?
+
+The headline question is a Bayesian posterior, computed exactly by enumerating every possible pair of red-ball
+counts. With M = 100 that is 101 × 101 ≈ 10,000 cells per team pair, which is trivial to compute.
+
+**Step 1 — Marginalise matchday form.** For one match, sum over all possible match draws:
+
+```latex
+P(D \mid R_A, R_B) = \sum_{k_A=0}^{m} \sum_{k_B=0}^{m} \mathrm{Hyp}(k_A \mid R_A)\, \mathrm{Hyp}(k_B \mid R_B)\, L(D \mid k_A, k_B)
+```
+
+**Step 2 — Combine matches and prior.** If R is assumed not to change, matches are independent given skill, and
+the posterior is:
+
+```latex
+P(R_A, R_B \mid D) \propto P(R_A)\, P(R_B) \prod_{\text{matches}} P(D_{\text{match}} \mid R_A, R_B)
+```
+
+With enough matches it then becomes as narrow as you like around the true red-ball counts.
+
+If R may change, older matches say less about today's R. Before each new match, the posterior is widened with an
+assumed drift kernel K (e.g. R moves ±1 ball with probability δ), and then updated with the match (forward
+filtering on the same grid):
+
+```latex
+P(R_t \mid D_{<t}) = \sum_{R'} K(R_t \mid R')\, P(R' \mid D_{<t}), \qquad P(R_t \mid D_{\le t}) \propto P(R_t \mid D_{<t})\, P(D_t \mid R_t)
+```
+
+The posterior then stops narrowing at a width set by how fast R is assumed to move compared with how much each match
+reveals. K is the observer's assumption, not necessarily the rule used in the simulation: too little widening makes
+the inference overconfident, too much makes it more uncertain than needed.
+
+**Step 3 — Answer the question.** Sum the posterior along the diagonal where the difference is N:
+
+```latex
+P(R_A - R_B = N \mid D) = \sum_{R_A - R_B = N} P(R_A, R_B \mid D)
+```
+
+The same table also gives P(R\_A > R\_B), credible intervals for the difference, and so on.
+
+**Extension:** several teams playing each other: estimate all R\_i jointly. Start by holding opponents fixed at their current
+best estimate and updating one team at a time.
+
+### Open questions for inference
+
+- **Per-shot xG or match totals?** Per-shot data gives the exact likelihood. Match totals require approximating the
+  distribution of summed xG.
+- Walk through the one-match likelihood equation together.
+
+### Checking the inference
+
+**Are its probabilities honest?** Test on matches the model was not fitted to:
+
+- Win/draw/loss forecasts scored with log loss and ranked probability score, compared against a baseline (e.g. a
+  Poisson or Dixon–Coles model, or bookmaker odds)
+- Reliability: events forecast at 30% should happen about 30% of the time
+
+**Is "X% likely that A has N more red balls" correct?** This is checked by simulation, since true red balls are
+never observed:
+
+1. Pick known R values, simulate matches, run the inference.
+2. Repeat many times. An 80% credible interval for R\_A − R\_B should contain the true difference in about 80% of
+   runs.
+3. If coverage is too low, the model is overconfident (usually m or the assumed drift K is wrong).
