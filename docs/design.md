@@ -21,27 +21,36 @@ League seasons. Each team's skill is the number of red balls in its skill pool.
 4. **Ready for inference later:** every probability in the model can be written down exactly, so that a later
    project can infer the red balls in each skill pool from observed data. Inference is not part of this project.
 
+## Notation
+
+- M = total number of balls in a container, m = number of red balls in it. The subscript names the container:
+  s = skill pool, u = match urn, t = tempo urn.
+- k = number of balls drawn: k\_w to decide who shoots, k\_c chance balls.
+- n = rounds per match, m\_h = extra red balls for the home team, μ = average number of shots per match.
+
 ## Model structure
 
 A simulation is a series of matches. Each match runs through six phases:
 
 For each match:
 
-1. **Skill change** (skill pool: M balls, R red): the number of red balls in each team's skill pool may change, as
-   set by whoever runs the simulation.
-2. **Match urn** (m balls): each team fills its match urn with m balls drawn from its skill pool (+ h extra red
-   balls for the home team).
-   - The home team gets x red balls extra to add to its match urn.
+1. **Skill change** (skill pool: M\_s balls, m\_s red): the number of red balls in each team's skill pool may
+   change, as set by whoever runs the simulation.
+2. **Match urn** (M\_u balls): each team fills its match urn with M\_u balls drawn from its skill pool. The home
+   team adds m\_h extra red balls to its match urn.
 
 Then, for each of the n rounds in the match:
 
-3. **Shot or not** (tempo urn: N balls, s red): one draw decides whether there is a shot this round.
+3. **Shot or not** (tempo urn: M\_t balls, m\_t red): one draw decides whether there is a shot this round.
 
    If there is a shot:
 
-4. **Who shoots:** both teams draw from their match urns, which decides who shoots.
-5. **xG** (c chance balls): the shooting team draws c balls from its match urn; their red share is the shot's xG. The balls are then placed in a shot urn.
-6. **Goal or not:** one ball is drawn from the c chance balls; red is a goal.
+4. **Who shoots:** each team grabs k\_w balls from its match urn (without replacement). The team with more red
+   balls shoots. If equal, each team draws one more ball at a time until one draws red and the other white. All
+   balls then go back into the match urns.
+5. **xG** (k\_c chance balls): the shooting team draws k\_c balls from its match urn; their red share is the
+   shot's xG. The balls are then placed in a shot urn.
+6. **Goal or not:** one ball is drawn from the k\_c chance balls; red is a goal.
 
 Observed: for each shot, the round, the shooting team (home or away), its xG and whether it was a goal.
 
@@ -59,6 +68,18 @@ Simulate whole seasons with the trained parameters and compare against real data
 - Goals per match, 0–0 rate, draw rate, common scorelines
 - Spread of final league points
 - Etc.
+
+**Who shoots (phase 4):** k\_w and the difference in red balls between teams both set how uneven the split of
+shots is. A larger k\_w gives the better team a bigger share, and more so when M\_u is small, since grabbing k\_w
+of a small match urn reveals more of it. One of them has to be fixed before the other can be trained. Example
+share of shots for A, M\_u = 20:
+
+| A red share | B red share | k\_w = 1 | k\_w = 3 | k\_w = 5 | k\_w = 10 |
+| --- | --- | --- | --- | --- | --- |
+| 0.55 | 0.45 | 0.60 | 0.64 | 0.67 | 0.77 |
+| 0.60 | 0.40 | 0.70 | 0.76 | 0.81 | 0.93 |
+| 0.30 | 0.20 | 0.64 | 0.67 | 0.71 | 0.82 |
+| 0.15 | 0.10 | 0.62 | 0.64 | 0.66 | 0.76 |
 
 ## Relation to real world xG data
 

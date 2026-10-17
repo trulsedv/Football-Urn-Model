@@ -51,7 +51,7 @@ difference nor on the sum of the two teams' final points. Options considered:
 - **Exactness from match urns alone is impossible:** the probability of any event built from match-urn colours
   depends on p_A and p_B, unless the event ignores the colours entirely.
 
-Conclusion: a tempo urn, independent of the match urns, decides whether a round gives a shot. It has s = μN/n red
+Conclusion: a tempo urn, independent of the match urns, decides whether a round gives a shot. It has m\_t = μM\_t/n red
 balls, so the average total is μ.
 
 ### The split only has to depend on red balls, initially
@@ -68,8 +68,8 @@ from their match urns):
 
 Phase 1 is not a random step of the model (this matters mostly for the later inference). Whoever runs the simulation sets how the red balls in each skill pool
 change between matches: not at all, randomly, or by a rule. An observer who only sees shots, xG values and goals
-infers R with Bayes. If R never changes, the posterior can get as certain as you like (e.g. 99.999%) with enough
-matches. If R changes, the observer must widen the posterior between matches with an assumed drift; this
+infers m\_s with Bayes. If m\_s never changes, the posterior can get as certain as you like (e.g. 99.999%) with enough
+matches. If m\_s changes, the observer must widen the posterior between matches with an assumed drift; this
 assumption belongs to the inference, not to the model, and need not equal the rule the simulation used.
 
 ### Earlier decisions
@@ -91,7 +91,7 @@ see "Tempo pool" under Future ideas.
 ## Open
 
 - **Split rule:** redraw or coin flip on same colour.
-- **Where chance balls come from, and how many (c):** the match urn or a separate chance urn. Real xG is mostly
+- **Where chance balls come from, and how many (k\_c):** the match urn or a separate chance urn. Real xG is mostly
   below 0.1, which would need match urns of about 10% red if chance balls come from the match urn. With a tempo urn
   for the total, phase 4 no longer needs match urns near 50% red, so this is not ruled out. Hunch: choosing how the balls are drawn in phase 4 (who shoots) may make it possible for the match urn to model both who shoots and the xG accurately. Check against the
   per-shot xG data.
@@ -102,7 +102,7 @@ see "Tempo pool" under Future ideas.
      is noise.
 - **Teams that outperform (or underperform) their xG.** Some teams score more, or concede fewer, goals than their
   xG says. The end goal is to account for it, through the correction above.
-- **Pool size M:** 100 is a convenient default; confirm or pick another.
+- **Skill pool size M\_s:** 100 is a convenient default; confirm or pick another.
 - **Per-team check of shot quality:** per team and season, correlate shots per match and mean xG per shot with a
   skill proxy (e.g. final table position). Partly answered by analysis 2.
 
@@ -110,11 +110,11 @@ see "Tempo pool" under Future ideas.
 
 ### Tempo pool for the tempo urn
 
-To add the missing match-to-match variation in total shots, fill the tempo urn before each match by drawing N balls
+To add the missing match-to-match variation in total shots, fill the tempo urn before each match by drawing M\_t balls
 (without replacement) from a larger tempo pool, the same way phase 2 fills the match urn from the skill pool.
 
-Example: n = 100 rounds, a tempo pool with 25% red balls, and N ≈ 170 balls drawn for each match gives mean 25 and
-variance ≈ 29.5. The variance of the total is n·Q(1−Q) + n(n−1)·Var(s/N), where Q is the pool's red share.
+Example: n = 100 rounds, a tempo pool with 25% red balls, and M\_t ≈ 170 balls drawn for each match gives mean 25 and
+variance ≈ 29.5. The variance of the total is n·Q(1−Q) + n(n−1)·Var(m\_t/M\_t), where Q is the pool's red share.
 
 ### Split depending only on the difference
 
@@ -124,7 +124,8 @@ Once the model works, the split could be made to depend only on p_A − p_B, e.g
 
 Not part of this project, perhaps a later one: using Bayesian inference on observations (shots, xG values, goals)
 to get probability distributions over the red balls in every team's skill pool, and predictions from them. The model
-must stay simple enough for this (goal 4). Notes kept from earlier design work:
+must stay simple enough for this (goal 4). Notes kept from earlier design work, in the old notation (R = m\_s,
+m = M\_u, k = m\_u, c = k\_c, N = M\_t, s = m\_t, M = M\_s):
 
 **Likelihood of one match.** Given matchday strengths, the probability of the observed shots, their xG values and
 the goals is:

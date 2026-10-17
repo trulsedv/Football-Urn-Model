@@ -17,7 +17,7 @@ points include the match itself, and points are a noisy measure of skill. Both a
 
 1. **Shot counts vs d.** Bin d (e.g. 10-point bins). In each bin, look at the full distribution of home shots and
    away shots: mean, variance and histogram. This is the "3D landscape" P(k shots | d). Variance above what a
-   binomial predicts indicates matchday form and informs m.
+   binomial predicts indicates matchday form and informs M\_u.
 2. **Shot quality vs d.** Compare the per-shot xG distribution across bins of the shooting team's point advantage.
    Does the whole distribution shift, or only its mean?
 3. **Coupling of shot counts.** Within each bin of d, correlate home shots with away shots. A negative correlation
