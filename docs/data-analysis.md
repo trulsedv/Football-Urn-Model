@@ -1,7 +1,8 @@
 # Football Urn Model — Data Analysis
 
-Real data used to design the model and to set what it must reproduce. The model itself is described in
-[design.md](design.md); the decisions drawn from this data are in [considerations.md](considerations.md).
+Real data used to design the model and to set what it must reproduce: the analyses, their figures and results.
+[design.md](design.md) refers to them phase by phase; the decisions drawn from this data are in
+[considerations.md](considerations.md).
 
 ## Data
 

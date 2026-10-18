@@ -1,8 +1,9 @@
 # Football Urn Model — Design Considerations
 
-What we have considered while designing the model, and what we concluded. [design.md](design.md) describes the
-system itself; this file records why it looks the way it does, what is still open, and ideas for later. Data
-results are in [data-analysis.md](data-analysis.md).
+What we have considered while designing the model, and what we concluded: the choices between alternatives and
+their caveats, what is still open, and ideas for later. How to play is in the [README](../README.md); why the model
+is the way it is, with equations and parameters, is in [design.md](design.md). Data results are in
+[data-analysis.md](data-analysis.md).
 
 ## Decided
 
