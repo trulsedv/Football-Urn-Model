@@ -8,8 +8,16 @@ Real data used to design the model and to set what it must reproduce: the analys
 
 One season of Premier League matches (2025/26) with per-shot xG from Understat, fetched with
 [soccerdata](https://github.com/probberechts/soccerdata). Per shot: match, team, home or away, xG, goal. Per team:
-final points. Own goals are excluded from shots. Run with `uv run shot-counts` and `uv run shot-quality`; code in
-`src/football_urn_model/`.
+final points. Own goals are excluded from shots. Code in `src/football_urn_model/`. Each script prints a summary
+table; the analyses also write a CSV and an interactive plotly HTML page to `output/`.
+
+```bash
+uv run shot-counts    # analysis 1: shots per match vs skill proxy difference
+uv run shot-quality   # analysis 2: xG per shot vs skill proxy difference
+uv run calibrate      # fit the model to the real season and compare all statistics, real vs simulated (~1 minute)
+```
+
+What `calibrate` fits, and against which statistic, is in `fitting_plan()` in `src/football_urn_model/calibrate.py`.
 
 **Skill proxy.** For each match, d = final points of the home team − final points of the away team. Caveats: final
 points include the match itself, and points are a noisy measure of skill. Both are acceptable for a first look.
@@ -18,7 +26,7 @@ points include the match itself, and points are a noisy measure of skill. Both a
 
 1. **Shot counts vs d.** Bin d (e.g. 10-point bins). In each bin, look at the full distribution of home shots and
    away shots: mean, variance and histogram. This is the "3D landscape" P(k shots | d). Variance above what a
-   binomial predicts indicates matchday form and informs M\_u.
+   binomial predicts indicates matchday form and informs $M_u$.
 2. **Shot quality vs d.** Compare the per-shot xG distribution across bins of the shooting team's point advantage.
    Does the whole distribution shift, or only its mean?
 3. **Coupling of shot counts.** Within each bin of d, correlate home shots with away shots. A negative correlation
