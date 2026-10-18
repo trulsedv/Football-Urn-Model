@@ -15,10 +15,14 @@ uv run shot-counts    # analysis 1: shots per match vs skill difference
 uv run shot-quality   # analysis 2: xG per shot vs skill difference
 uv run simulate       # simulate one season with the starting parameters and print the league table
 uv run calibrate      # fit the parameters to the real season and compare all statistics (~1 minute)
+uv run streamlit run src/football_urn_model/app.py   # play one match by hand in the browser
 ```
 
-All fetch the Premier League 2025/26 season from Understat (cached in `~/soccerdata` after the first run), print a
+The scripts fetch the Premier League 2025/26 season from Understat (cached in `~/soccerdata` after the first run), print a
 summary table. The analyses also write a CSV and an interactive plotly HTML page to `output/`. The model's
 starting parameters are in `model_settings()` in `src/football_urn_model/simulate.py`; what is fitted, and
 against which statistic, is in `fitting_plan()` in `src/football_urn_model/calibrate.py`. Skill difference is measured as
 d = final points of one team − final points of the other.
+
+The app plays one match by hand: each press of "Next draw" makes one draw (a number of balls from one urn), the
+same steps as playing with real urns. Every model parameter and both teams' red balls are adjustable in the sidebar.

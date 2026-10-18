@@ -12,6 +12,7 @@ dependencies = [
     "pandas>=3.0.6",
     "plotly>=7.1.0",
     "soccerdata>=1.9.1",
+    "streamlit>=1.66.0",
 ]
 
 [project.scripts]
