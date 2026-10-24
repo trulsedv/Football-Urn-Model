@@ -33,79 +33,95 @@ Real skill cannot be observed, so the project use uses final points of a season 
 - n = rounds per match, μ = average number of shots per match, $b$ = big-chance margin (red balls).
 - Marked balls: $m_h$ = extra red h-marked balls for the home team, $M_{xo}$ = extra x-marked balls added to the shot urn for ordinary chance, $m_{xo}$ = extra red x-marked balls added to the shot urn for ordinary chance, $M_{xb}$ = extra x-marked balls added to the shot urn for big chance, $m_{xb}$ = extra red x-marked balls added to the shot urn for big chance.
 
-Each chapter below has three parts: what the data shows (with the skill proxy), the model and its equations, and how the model fits the data. Phase 1 (skill change) is an input to the simulation and has no chapter.
+## Chapters
 
-## Phase 2: Match urn
+This is basic training: the model is fitted to the basic observations of a match. Each chapter covers one part of a match and names its observables. It describes the model (the rules are in the [README](../README.md#how-to-play)) and gives equations for each observable given the output of the previous phase. Then, for each observable, it compares real and simulated data in a 3×3 grid of skill proxy sum and difference (terciles): a figure in [data-analysis.md](data-analysis.md), tables of matches, mean, standard deviation and skewness per panel (real / sim, with all matches and the theory above each table), a short evaluation and a one-sentence verdict. Phase 1 (skill change) is an input to the simulation, and phase 2 (match urn) and final points are left out for now.
 
-### Analysis of data
+## Shot (phase 3)
 
-The match urn has no observable of its own. It shows up as extra spread between matches in the later phases, for
-example in the share of shots per team (phase 4).
+Observable: total shots per match.
 
-### Modelling and constraining equations
+### Model
 
-Each team draws $M_u$ balls from its skill pool of $M_s$ balls, $m_s$ of them red; the home team adds $m_h$ red balls.
+[README step 3](../README.md#how-to-play): one draw from the tempo urn in each of the n rounds. Parameters: n,
+$M_t$, $m_t$.
 
-- The distribution of red balls in the match urn will be:
-  [eq]
+### Equations
 
-## Phase 3: Total number of shots (both teams)
+The tempo urn does not depend on the earlier phases. With $p = m_t / M_t$:
 
-### Analysis of data
+- The total number of shots is binomially distributed. Its variance is always below its mean, and grows towards the mean as n grows.
+- Mean: $\mu = n p$
+- Standard deviation: $\sigma = \sqrt{n p (1 - p)} = \sqrt{\mu - \mu^2 / n}$
+- Skewness: $\frac{1 - 2p}{\sigma}$
 
-- The mean does not depend on:
-  - skill proxy difference, see analysis 1
-  - skill proxy sum, see analysis 1
-- The variance does depend on:
-  - (not confirmed) skill proxy difference, see analysis result X
-  - (not confirmed) skill proxy sum, see analysis result X
+### Total shots per match
 
-#### Shape of the data
+Simulated 100 seasons with $n = 100$ and $m_t = 1$ and $M_t = 4$ ($p = 0.25$), and compared against the real Premier League 2025/26 season. See analysis 6 in [data-analysis.md](data-analysis.md)
 
-The distribution looks like X.
+**Matches** (real / sim)
 
-### Modelling and constraining equations
+All matches (real / sim): 380 / 38000
 
-The number of shots is modelled by drawing from a tempo urn with $M_t$ balls and $m_t$ red balls, once in each of the n
-rounds. With $p = m_t / M_t$:
+| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| --- | --- | --- | --- |
+| high [112 to 163 pts] | 55 / 5086 | 19 / 4899 | 52 / 4797 |
+| mid [97 to 111 pts] | 28 / 4028 | 70 / 4686 | 24 / 3796 |
+| low [42 to 96 pts] | 50 / 3881 | 37 / 3153 | 45 / 3674 |
 
-- The mean of the total number of shots will be:
-  $\mu = n p$
-- The variance of the total number of shots will be:
-  $n p (1 - p) = \mu - \mu^2 / n$
-- The total number of shots is binomially distributed. Its variance is always below its mean, and grows towards
-  the mean as n grows.
+**Mean** (real / sim)
 
-#### Model vs data
+All matches (real / sim / theory): 24.96 / 24.99 / 25.00
 
-[how does this fit the data]
+| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| --- | --- | --- | --- |
+| high [112 to 163 pts] | 24.98 / 25.01 | 27.32 / 25.00 | 25.77 / 25.02 |
+| mid [97 to 111 pts] | 24.00 / 24.95 | 24.43 / 25.07 | 23.96 / 25.08 |
+| low [42 to 96 pts] | 24.72 / 24.87 | 25.00 / 25.02 | 25.16 / 24.87 |
 
-## Phase 4: Share of shots per team
+**Standard deviation** (real / sim)
 
-### Analysis of data
+All matches (real / sim / theory): 5.43 / 4.33 / 4.33
 
-- The mean does depend on:
-  - skill proxy difference, see analysis 1
-  - (not confirmed) skill proxy sum, see analysis X
-- The variance does depend on:
-  - (not confirmed) skill proxy difference, see analysis result X
-  - (not confirmed) skill proxy sum, see analysis result X
+| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| --- | --- | --- | --- |
+| high [112 to 163 pts] | 4.32 / 4.35 | 6.07 / 4.34 | 5.27 / 4.29 |
+| mid [97 to 111 pts] | 7.06 / 4.28 | 4.91 / 4.31 | 5.24 / 4.44 |
+| low [42 to 96 pts] | 5.99 / 4.30 | 5.12 / 4.46 | 5.89 / 4.26 |
 
-#### Shape of the data
+**Skewness** (real / sim)
 
-The mean goes from X to Y rather linearly with changing skill proxy difference.
-For a given set of skills the distribution looks like X.
+All matches (real / sim / theory): 0.23 / 0.12 / 0.12
 
-### Modelling and constraining equations
+| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| --- | --- | --- | --- |
+| high [112 to 163 pts] | -0.19 / 0.15 | -0.66 / 0.15 | 0.58 / 0.18 |
+| mid [97 to 111 pts] | 0.28 / 0.03 | -0.30 / 0.08 | 0.41 / 0.15 |
+| low [42 to 96 pts] | 0.30 / 0.03 | 0.52 / 0.19 | 0.74 / 0.11 |
 
-The share of shots per team is modelled by the two teams drawing $k_w$ balls from their match urns; the one with the
+The simulated mean, standard deviation and skewness match the theory, which confirms the equations. The mean fits the real data within about one shot in every panel except the thinnest (high sum, mid difference, 19 matches). The standard deviation is too small in 8 of 9 panels (real 4.3–7.1, simulated 4.3–4.5), and the theory shows that the tempo urn cannot reach the real 5.43. The real skewness jumps between panels (−0.66 to 0.74), which with 19–70 matches per panel is mostly noise, but over all matches it is higher than the model's (0.23 against 0.12).
+
+Verdict: the mean fits, but the spread of total shots between matches is too small, and the tempo urn alone cannot fix it.
+
+## Attack/defend (phase 4)
+
+Observables: home share of shots per match.
+
+### Model
+
+[README step 4](../README.md#how-to-play): both teams grab $k_w$ balls from their match urns; the one with the
 most red balls gets the shot. If they have equal red balls, they draw one more ball each until one gets red and the
-other white.
+other white. Parameters: $k_w$, and through the match urns $m_s$, $M_s$, $M_u$, $m_h$.
 
-- The mean for a team will be:
-  [eq]
-- The variance for a team will be:
-  [eq]
+### Equations
+
+Given the match urns:
+
+- Distribution: [eq]
+- Mean: [eq]
+- Variance: [eq]
+
+Averaged over the match urns (phase 2): [eq]
 
 $k_w$ and the difference in red balls between teams both set how uneven the split of shots is. A larger $k_w$ gives
 the better team a bigger share, and more so when $M_u$ is small, since grabbing $k_w$ of a small match urn reveals
@@ -118,31 +134,33 @@ more of it. Example share of shots for A, $M_u$ = 20:
 | 0.30 | 0.20 | 0.64 | 0.67 | 0.71 | 0.82 |
 | 0.15 | 0.10 | 0.62 | 0.64 | 0.66 | 0.76 |
 
-#### Model vs data
+### Home share of shots per match
 
-[how does this fit the data]
+| Home share of shots | Skill proxy difference | Skill proxy sum |
+| --- | --- | --- |
+| Mean | Depends (analysis 1) | Not checked |
+| Variance | Not checked | Not checked |
+| Shape | Not checked | Not checked |
 
-## Phase 5: xG value of shots
+The mean goes from X to Y rather linearly with changing skill proxy difference. For a given set of skills the
+distribution looks like X.
 
-### Analysis of data
+Figure: [3×3 grid, real vs simulated]
 
-- The mean does depend on:
-  - skill proxy difference, see analysis 2
-  - (not confirmed) skill proxy sum, see analysis result X
-- The variance does depend on:
-  - (not confirmed) skill proxy difference, see analysis result X
-  - (not confirmed) skill proxy sum, see analysis result X
+Verdict: [one short sentence]
 
-#### Shape of the data
+## xG (phase 5)
 
-The distribution looks like X.
+Observables: xG per shot, ordinary shots and big chances in one distribution.
 
-### Modelling and constraining equations
+### Model
 
-The xG is modelled in two ways: ordinary chance and big chance. If the team won the shot (phase 4) by $b$ (the big-chance margin)
-or more red balls, it is a big chance. A shot urn is filled with balls:
+[README step 5](../README.md#how-to-play): the xG is modelled in two ways, ordinary chance and big chance. If the
+team won the shot (phase 4) by $b$ (the big-chance margin) or more red balls, it is a big chance. A shot urn is
+filled with balls:
 
-- x-marked balls: $M_x$ of them, $m_x$ red. $M_x$, $m_x$ = $M_{xb}$, $m_{xb}$ for a big chance and $M_{xo}$, $m_{xo}$ for an ordinary chance.
+- x-marked balls: $M_x$ of them, $m_x$ red. $M_x$, $m_x$ = $M_{xb}$, $m_{xb}$ for a big chance and $M_{xo}$,
+  $m_{xo}$ for an ordinary chance.
 - The attacking team draws $k_c$ balls from its match urn and gets $R_1$ red balls.
 - The defending team draws $k_d$ balls from its match urn and gets $R_2$ red balls.
 - The defender's red balls cancel the attacker's red balls: $c = \min(R_1, R_2)$ red balls are removed.
@@ -150,103 +168,101 @@ or more red balls, it is a big chance. A shot urn is filled with balls:
 
 $$\text{xG} = \frac{m_x + R_1 - c}{M_x + k_c - c}$$
 
-#### Big chance constraining equations
+Parameters: $k_c$, $k_d$, $M_{xo}$, $m_{xo}$, $M_{xb}$, $m_{xb}$, and through the big chances $b$ and $k_w$.
 
-- The mean of the xG will be:
-  [eq]
-- The variance of the xG will be:
-  [eq]
+### Equations
 
-#### Ordinary chance constraining equations
+Given the match urns and who shoots:
 
-- The mean of the xG will be:
-  [eq]
-- The variance of the xG will be:
-  [eq]
+- Ordinary chance: distribution [eq], mean [eq], variance [eq]
+- Big chance: distribution [eq], mean [eq], variance [eq]
+- All shots, ordinary and big chances together: distribution [eq], mean [eq], variance [eq]
 
-#### Model vs data
+### xG per shot
 
-[how does this fit the data]
-
-## Phase 6: Goals
-
-### Analysis of data
-
-- The mean does depend on:
-  - (not confirmed) skill proxy difference, see analysis result X
-  - (not confirmed) skill proxy sum, see analysis result X
-- The variance does depend on:
-  - (not confirmed) skill proxy difference, see analysis result X
-  - (not confirmed) skill proxy sum, see analysis result X
-
-#### Shape of the data
+| xG per shot | Skill proxy difference | Skill proxy sum |
+| --- | --- | --- |
+| Mean | Depends (analysis 2) | Not checked |
+| Variance | Not checked | Not checked |
+| Shape | Not checked (analysis 2 shows the whole distribution shifting, but not standardised) | Not checked |
 
 The distribution looks like X.
 
-### Modelling and constraining equations
+Figure: [3×3 grid, real vs simulated]
 
-One ball is drawn from the shot urn; red (or marked red) is a goal. A shot's xG is therefore exactly the probability
-that it becomes a goal.
+Verdict: [one short sentence]
 
-- The mean number of goals will be:
-  [eq]
-- The variance of the number of goals will be:
-  [eq]
+## Goal (phase 6)
 
-#### Model vs data
+Observables: goals per team per match.
 
-[how does this fit the data]
+### Model
 
-## Outcomes
+[README step 6](../README.md#how-to-play): one ball is drawn from the shot urn; red (or marked red) is a goal. A
+shot's xG is therefore exactly the probability that it becomes a goal. No parameters of its own.
 
-The outcomes follow from the phases above. Each is written as an equation given the outcome of the phases, and
-compared with simulated seasons.
+### Equations
 
-### Results
+Given the xG of each shot:
 
-#### Analysis of data
+- Distribution: [eq]
+- Mean: [eq]
+- Variance: [eq]
 
-- The home win, draw and away win rates depend on:
-  - (not confirmed) skill proxy difference, see analysis result X
-  - (not confirmed) skill proxy sum, see analysis result X
+### Goals per team per match
 
-#### Modelling and equations
+| Goals per team per match | Skill proxy difference | Skill proxy sum |
+| --- | --- | --- |
+| Mean | Not checked | Not checked |
+| Variance | Not checked | Not checked |
+| Shape | Not checked | Not checked |
 
-[eq]
+The distribution looks like X.
 
-#### Model vs data
+Figure: [3×3 grid, real vs simulated]
 
-[how does this fit the data]
+Verdict: [one short sentence]
 
-### Final points of the season
+## Result
 
-#### Analysis of data
+Observables: home win, draw, away win.
 
-The final points are the skill proxy for the data analyses. Their spread over the teams is: X.
+### Model
 
-#### Modelling and equations
+The result follows from the goals of both teams. No parameters of its own.
 
-[eq]
+### Equations
 
-#### Model vs data
+Given the goals of both teams:
 
-[how does this fit the data]
+- Probability of a home win, a draw and an away win: [eq]
+
+### Home win, draw, away win
+
+| Home win, draw, away win | Skill proxy difference | Skill proxy sum |
+| --- | --- | --- |
+| Rates | Not checked | Not checked |
+
+Figure: [3×3 grid, real vs simulated]
+
+Verdict: [one short sentence]
 
 ## Parameters
 
-The current values are in `model_settings()` in `src/football_urn_model/simulate.py`.
+The current values are in `model_settings()` in `src/football_urn_model/simulate.py`. Goal and Result have no
+parameters of their own.
 
 | Parameter | Symbol | Chapters, and what it changes |
 | --- | --- | --- |
-| Red balls in a team's skill pool | $m_s$ | Phase 2: red balls in the match urn; through it, phases 4, 5 and the outcomes |
-| Balls in the skill pool | $M_s$ | Phase 2: spread of red balls in the match urn (form) |
-| Balls in the match urn | $M_u$ | Phase 2: form; phase 4: share of shots; phase 5: xG |
-| Extra red balls for the home team | $m_h$ | Phase 2: home match urn; phase 4: home share of shots; phase 5: home xG |
-| Rounds per match | n | Phase 3: mean and variance of total shots |
-| Balls and red balls in the tempo urn | $M_t$, $m_t$ | Phase 3: mean and variance of total shots |
-| Balls grabbed to decide who shoots | $k_w$ | Phase 4: share of shots; phase 5: share of big chances |
-| Big-chance margin | $b$ | Phase 5: share of big chances |
-| Chance balls drawn by the shooting team | $k_c$ | Phase 5: xG |
-| Balls drawn by the defending team | $k_d$ | Phase 5: xG |
-| x-marked balls and red x-marked balls, ordinary shot | $M_{xo}$, $m_{xo}$ | Phase 5: xG of ordinary shots; phase 6: goals |
-| x-marked balls and red x-marked balls, big chance | $M_{xb}$, $m_{xb}$ | Phase 5: xG of big chances; phase 6: goals |
+| Red balls in a team's skill pool | $m_s$ | Attack/defend: home share of shots; xG |
+| Balls in the skill pool | $M_s$ | Attack/defend: spread of the home share between matches (form); xG |
+| Balls in the match urn | $M_u$ | Attack/defend: home share of shots and its spread; xG |
+| Extra red balls for the home team | $m_h$ | Attack/defend: home share of shots; xG: home xG |
+| Rounds per match | n | Shot: mean and variance of total shots |
+| Balls and red balls in the tempo urn | $M_t$, $m_t$ | Shot: mean and variance of total shots |
+| Balls grabbed to decide who shoots | $k_w$ | Attack/defend: home share of shots; xG: through big chances |
+| Big-chance margin | $b$ | xG: through big chances |
+| Chance balls drawn by the shooting team | $k_c$ | xG |
+| Balls drawn by the defending team | $k_d$ | xG |
+| x-marked balls and red x-marked balls, ordinary shot | $M_{xo}$, $m_{xo}$ | xG of ordinary shots |
+| x-marked balls and red x-marked balls, big chance | $M_{xb}$, $m_{xb}$ | xG of big chances |

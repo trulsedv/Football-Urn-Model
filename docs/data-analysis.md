@@ -14,6 +14,7 @@ table; the analyses also write a CSV and an interactive plotly HTML page to `out
 ```bash
 uv run shot-counts    # analysis 1: shots per match vs skill proxy difference
 uv run shot-quality   # analysis 2: xG per shot vs skill proxy difference
+uv run shot-chapter   # analysis 6: total shots per match by skill proxy terciles, real vs simulated
 uv run calibrate      # fit the model to the real season and compare all statistics, real vs simulated (~1 minute)
 ```
 
@@ -63,6 +64,7 @@ points include the match itself, and points are a noisy measure of skill. Both a
   1,114 xG but 927 goals (17% fewer). Penalties: 70 xG, 77 goals. Shots with xG between 0.1 and 0.7 convert
   clearly below their xG (e.g. 0.4–0.7: mean xG 0.52, goal rate 0.39). The reason is unknown; comparing with
   earlier seasons would show whether it is Understat's model or an unusual season.
+- **Analysis 6 — total shots per match by skill proxy terciles (`shot_chapter.py`, Shot chapter of [design.md](design.md)).** Matches are split into terciles of the skill proxy difference (edges −8 and +8 points) and of the skill proxy sum (edges 96 and 111 points), giving a 3×3 grid of panels with 19–70 real matches each. A hundred simulated seasons with the starting parameters use their own simulated final points as the proxy, binned with the same edges. The figure (`output/shot_chapter_grid.html`) shows per panel the real distribution as bars and the simulated one as a line, with the proxy ranges, match counts, and mean and sd in the panel title. The matches, mean, sd and skewness per panel are tabulated in the Shot chapter of [design.md](design.md).
 
 ## What the model must reproduce
 
