@@ -1,6 +1,7 @@
-"""Play one match by hand: one button press per draw, with every model parameter adjustable."""
+"""Play one match by hand: one button press per draw, one table row per round, every model parameter adjustable."""
 
 import numpy as np
+import pandas as pd
 import streamlit as st
 
 from football_urn_model.simulate import model_settings, play_match
@@ -12,27 +13,29 @@ def main() -> None:
     settings, home_red_balls, away_red_balls, seed = sidebar_settings()
 
     state = st.session_state
-    if st.button("New match") or "steps" not in state:
+    # A new match gets the next seed; the button's callback runs before the sidebar reads the seed.
+    if st.button("New match", on_click=lambda: state.update(seed=state["seed"] + 1)) or "steps" not in state:
         rng = np.random.default_rng(seed)
         state["steps"] = play_match(home_red_balls, away_red_balls, settings, rng)
-        state.update({"log": [], "round": 0, "score": {True: 0, False: 0}, "is_over": False})
+        state.update({"urns": {}, "rows": [], "score": {True: 0, False: 0}, "is_over": False})
+        state["rounds"] = settings["rounds"]
 
-    if st.button("Next draw", type="primary", disabled=state["is_over"]):
-        step = next(state["steps"], None)
-        if step is None:
-            state["is_over"] = True
-            state["log"].append("Full time.")
-        else:
-            state["log"].append(describe(step))
-            if step[0] == "tempo":
-                state["round"] = step[1]
-            if step[0] == "goal" and step[4]:
-                state["score"][step[1]] += 1
+    columns = st.columns([1, 1, 1, 5])
+    if columns[0].button("Next draw", type="primary", disabled=state["is_over"]):
+        advance(0)
+    if columns[1].button("Next round", disabled=state["is_over"]):
+        advance(1)
+    if columns[2].button("Next 5 rounds", disabled=state["is_over"]):
+        advance(5)
 
     score = state["score"]
-    st.header(f"Home {score[True]} - {score[False]} Away (round {state['round']} of {settings['rounds']})")
-    for line in reversed(state["log"]):
-        st.write(line)
+    played = len(state["rows"])
+    full_time = " · full time" if state["is_over"] else ""
+    st.header(f"Home {score[True]} - {score[False]} Away (round {played} of {state['rounds']}{full_time})")
+    for is_home, (size, red, extra) in state["urns"].items():
+        h_marked = f", plus {extra} h-marked red" if extra else ""
+        st.write(f"{'Home' if is_home else 'Away'} match urn: {red} red of {size} from the skill pool{h_marked}")
+    show_rounds(state["rows"])
 
 
 def sidebar_settings() -> tuple[dict[str, int], int, int, int]:
@@ -46,7 +49,8 @@ def sidebar_settings() -> tuple[dict[str, int], int, int, int]:
     st.sidebar.header("Teams")
     home_red_balls = st.sidebar.number_input("home red balls in skill pool", min_value=0, value=20)
     away_red_balls = st.sidebar.number_input("away red balls in skill pool", min_value=0, value=15)
-    seed = st.sidebar.number_input("random seed", min_value=0, value=1)
+    st.session_state.setdefault("seed", 1)
+    seed = st.sidebar.number_input("random seed", min_value=0, key="seed")
     st.sidebar.header("Model parameters")
     settings = {
         name: int(st.sidebar.number_input(name, min_value=0, value=value))
@@ -56,44 +60,100 @@ def sidebar_settings() -> tuple[dict[str, int], int, int, int]:
     return settings, int(home_red_balls), int(away_red_balls), int(seed)
 
 
-def describe(step: tuple) -> str:
-    """Spell out one step of simulate.play_match as what happened at the table.
+def advance(rounds: int) -> None:
+    """Make the next draw (rounds = 0), or keep drawing until `rounds` more rounds have ended."""
+    state = st.session_state
+    rounds_ended = 0
+    while True:
+        step = next(state["steps"], None)
+        if step is None:
+            state["is_over"] = True
+            return
+        record(step)
+        # A round ends with a white ball from the tempo urn, or with the draw from the shot urn.
+        is_round_over = step[0] == "goal" or (step[0] == "tempo" and not step[2])
+        state["is_over"] = is_round_over and len(state["rows"]) == state["rounds"]
+        rounds_ended += is_round_over
+        if state["is_over"] or rounds_ended >= rounds:
+            return
+
+
+def record(step: tuple) -> None:
+    """Write one step of simulate.play_match into the match: the match urns, or a cell of the current round's row."""
+    state = st.session_state
+    name, *values = step
+    row = state["rows"][-1] if state["rows"] else {}
+    if name == "match urn":
+        state["urns"][values[0]] = values[1:]
+    elif name == "tempo":
+        state["rows"].append(
+            {
+                "shot": balls(values[1], 1),
+                "grab": {True: "", False: ""},
+                "chance": {True: "", False: ""},
+                "xg": "",
+                "kind": "",
+                "goal": "",
+            },
+        )
+    elif name == "grab":
+        is_home, draws, red = values
+        row["grab"][is_home] = balls(red, draws)
+    elif name == "tie-break":
+        home_is_red, away_is_red, is_put_back = values
+        # ↺: an urn ran empty, so all balls went back first.
+        row["grab"][True] += f"{' ↺' if is_put_back else ''} {balls(home_is_red, 1)}"
+        row["grab"][False] += f"{' ↺' if is_put_back else ''} {balls(away_is_red, 1)}"
+    elif name == "fair draw":
+        row["grab"][values[0]] += " (fair draw)"
+    elif name == "chance balls":
+        is_home, draws, red, is_big_chance = values
+        row["chance"][is_home] = balls(red, draws)
+        row["kind"] = "<b>big chance</b>" if is_big_chance else ""
+    elif name == "defender balls":
+        is_home, draws, red, shot_urn_red, shot_urn_size = values
+        row["chance"][is_home] = balls(red, draws)
+        row["xg"] = f"{shot_urn_red / shot_urn_size:.2f} ({shot_urn_red}/{shot_urn_size})"
+    elif name == "goal":
+        is_home, _, _, is_goal = values
+        row["goal"] = "GOAL" if is_goal else "-"
+        state["score"][is_home] += is_goal
+
+
+def show_rounds(rows: list[dict]) -> None:
+    """Show one row per round, newest first; phases 4 and 5 show the home team's balls above the away team's."""
+    table = pd.DataFrame(
+        {
+            "Round": range(1, len(rows) + 1),
+            "Shot": [row["shot"] for row in rows],
+            "Home/Away": [both_teams(row["grab"]) for row in rows],
+            "Chance": [both_teams(row["chance"]) for row in rows],
+            "xG": ["<br>".join(filter(None, [row["xg"], row["kind"]])) for row in rows],
+            "Goal": [row["goal"] for row in rows],
+        },
+    ).iloc[::-1]
+    st.markdown(table.to_html(index=False, escape=False), unsafe_allow_html=True)
+
+
+def balls(red: int, total: int) -> str:
+    """Write drawn balls as letters, red first: two red of three is RRW, with R in red.
 
     Returns:
-        One line of text.
+        HTML for the balls.
 
     """
-    team = {True: "Home", False: "Away"}
-    colour = {True: "red", False: "white"}
-    texts = {
-        "match urn": lambda is_home, size, red, extra: (
-            f"Phase 2 · {team[is_home]} draws {size} balls from its skill pool into its match urn: {red} red."
-            + (f" It adds {extra} extra red (home advantage)." if extra else "")
-        ),
-        "tempo": lambda round_number, is_shot: (
-            f"Round {round_number}, phase 3 · Tempo urn: {colour[is_shot]}, {'a shot' if is_shot else 'no shot'}."
-        ),
-        "grab": lambda is_home, draws, red: (
-            f"Phase 4 · {team[is_home]} grabs {draws} balls from its match urn: {red} red."
-        ),
-        "fair draw": lambda is_home: f"Phase 4 · Both urns hold one colour only; a fair draw picks {team[is_home]}.",
-        "tie-break": lambda home_is_red, away_is_red, is_put_back: (
-            "Phase 4 · Tie. "
-            + ("An urn ran empty, so all balls go back. " if is_put_back else "")
-            + f"One more ball each: home {colour[home_is_red]}, away {colour[away_is_red]}."
-        ),
-        "chance balls": lambda is_home, draws, red: f"Phase 5 · {team[is_home]} draws {draws} chance balls: {red} red.",
-        "defender balls": lambda is_home, draws, red, cancelled, marked_red, marked_white: (
-            f"Phase 5 · {team[is_home]} defends, drawing {draws} balls: {red} red, cancelling {cancelled} red."
-            f" Add {marked_red} marked red and {marked_white} marked white to the shot urn."
-        ),
-        "goal": lambda is_home, is_big_chance, xg, is_goal: (
-            f"Phase 6 · {team[is_home]} shoots ({'big chance' if is_big_chance else 'ordinary shot'}, xG {xg:.2f})."
-            f" One ball from the shot urn: {'red: GOAL!' if is_goal else 'white: no goal.'}"
-        ),
-    }
-    name, *values = step
-    return texts[name](*values)
+    red_balls = f'<span style="color: #d62728">{"R" * red}</span>'
+    return f'<span style="font-family: monospace">{red_balls}{"W" * (total - red)}</span>'
+
+
+def both_teams(cell: dict[bool, str]) -> str:
+    """Put the home team's balls above the away team's, or nothing if neither team drew.
+
+    Returns:
+        HTML for one table cell.
+
+    """
+    return f"<i>H</i> {cell[True]}<br><i>A</i> {cell[False]}" if cell[True] or cell[False] else ""
 
 
 if __name__ == "__main__":
