@@ -1,7 +1,7 @@
 # 4. Model mechanics
 
 This chapter sets out the urn chain exactly: every container, every draw and what each draw decides. The rules
-are the ones in the README ("How to play") and in [design.md](../design.md); where this chapter and those two
+are the ones in the [README](../../README.md) ("How to play") and in [design.md](../design.md); where this chapter and those two
 differ, they are right and this chapter is wrong. The chapter follows one match from start to finish, then shows
 why the whole match can be computed rather than simulated, and closes with the tension between the resolution and
 the variance of the draws.
