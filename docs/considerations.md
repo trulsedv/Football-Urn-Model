@@ -52,7 +52,7 @@ difference nor on the sum of the two teams' final points. Options considered:
 - **Exactness from match urns alone is impossible:** the probability of any event built from match-urn colours
   depends on p_A and p_B, unless the event ignores the colours entirely.
 
-Conclusion: a tempo urn, independent of the match urns, decides whether a round gives a shot. It has m\_t = μM\_t/n red
+Conclusion: a tempo urn, independent of the match urns, decides whether a round gives a shot. It has $m_t = \mu M_t / n$ red
 balls, so the average total is μ.
 
 ### The split only has to depend on red balls, initially
@@ -69,26 +69,26 @@ from their match urns):
 
 Phase 1 is not a random step of the model (this matters mostly for the later inference). Whoever runs the simulation sets how the red balls in each skill pool
 change between matches: not at all, randomly, or by a rule. An observer who only sees shots, xG values and goals
-infers m\_s with Bayes. If m\_s never changes, the posterior can get as certain as you like (e.g. 99.999%) with enough
-matches. If m\_s changes, the observer must widen the posterior between matches with an assumed drift; this
+infers $m_s$ with Bayes. If $m_s$ never changes, the posterior can get as certain as you like (e.g. 99.999%) with enough
+matches. If $m_s$ changes, the observer must widen the posterior between matches with an assumed drift; this
 assumption belongs to the inference, not to the model, and need not equal the rule the simulation used.
 
-### Who shoots: grab k\_w balls, most red wins (phase 4)
+### Who shoots: grab $k_w$ balls, most red wins (phase 4)
 
-Each team grabs k\_w balls from its match urn; the team with more red balls shoots, ties broken one ball at a time.
-k\_w = 1 equals the redraw rule; a larger k\_w gives the better team a bigger share of the shots. Chosen over the
-redraw and coin rules because k\_w gives a knob for how strongly skill decides the split.
+Each team grabs $k_w$ balls from its match urn; the team with more red balls shoots, ties broken one ball at a time.
+$k_w$ = 1 equals the redraw rule; a larger $k_w$ gives the better team a bigger share of the shots. Chosen over the
+redraw and coin rules because $k_w$ gives a knob for how strongly skill decides the split.
 
 ### xG: the defender cancels red balls (phase 5)
 
 The xG must depend on the defender too, since the data shows xG rising with the skill *difference*. The shooting
-team draws k\_c chance balls from its match urn and the defender k\_d; the defender's red balls are removed from
+team draws $k_c$ chance balls from its match urn and the defender $k_d$; the defender's red balls are removed from
 the shooter's before the shot urn is filled. Considered:
 
 - **Defender draws as many balls as the attacker:** about 60% of shots get xG = 0, and mean xG differs by a factor
   10–30 between strong and weak attackers (data: about 1.3). Rejected.
-- **Defender draws fewer balls (k\_d < k\_c):** skill effect about 1.2–1.5, close to the data. Chosen. Mean xG is
-  roughly the red share × (1 − k\_d/k\_c), so a mean of about 0.1 needs match urns of roughly 10–15% red.
+- **Defender draws fewer balls ($k_d$ < $k_c$):** skill effect about 1.2–1.5, close to the data. Chosen. Mean xG is
+  roughly the red share × (1 − $k_d$/$k_c$), so a mean of about 0.1 needs match urns of roughly 10–15% red.
 
 Chance balls come from the match urn, not a separate chance urn.
 
@@ -147,7 +147,7 @@ second peak, but within each kind of shot the values are still coarse. Accepted 
      is noise.
 - **Teams that outperform (or underperform) their xG.** Some teams score more, or concede fewer, goals than their
   xG says. The end goal is to account for it, through the correction above.
-- **Skill pool size M\_s:** 100 is a convenient default; confirm or pick another.
+- **Skill pool size $M_s$:** 100 is a convenient default; confirm or pick another.
 - **Per-team check of shot quality:** per team and season, correlate shots per match and mean xG per shot with a
   skill proxy (e.g. final table position). Partly answered by analysis 2.
 
@@ -155,11 +155,11 @@ second peak, but within each kind of shot the values are still coarse. Accepted 
 
 ### Tempo pool for the tempo urn
 
-To add the missing match-to-match variation in total shots, fill the tempo urn before each match by drawing M\_t balls
+To add the missing match-to-match variation in total shots, fill the tempo urn before each match by drawing $M_t$ balls
 (without replacement) from a larger tempo pool, the same way phase 2 fills the match urn from the skill pool.
 
-Example: n = 100 rounds, a tempo pool with 25% red balls, and M\_t ≈ 170 balls drawn for each match gives mean 25 and
-variance ≈ 29.5. The variance of the total is n·Q(1−Q) + n(n−1)·Var(m\_t/M\_t), where Q is the pool's red share.
+Example: n = 100 rounds, a tempo pool with 25% red balls, and $M_t$ ≈ 170 balls drawn for each match gives mean 25 and
+variance ≈ 29.5. The variance of the total is n·Q(1−Q) + n(n−1)·Var($m_t$/$M_t$), where Q is the pool's red share.
 
 ### Split depending only on the difference
 
@@ -169,8 +169,8 @@ Once the model works, the split could be made to depend only on p_A − p_B, e.g
 
 Not part of this project, perhaps a later one: using Bayesian inference on observations (shots, xG values, goals)
 to get probability distributions over the red balls in every team's skill pool, and predictions from them. The model
-must stay simple enough for this (goal 4). Notes kept from earlier design work, in the old notation (R = m\_s,
-m = M\_u, k = m\_u, c = k\_c, N = M\_t, s = m\_t, M = M\_s):
+must stay simple enough for this (goal 4). Notes kept from earlier design work, in the old notation (R = $m_s$,
+m = $M_u$, k = $m_u$, c = $k_c$, N = $M_t$, s = $m_t$, M = $M_s$):
 
 **Likelihood of one match.** Given matchday strengths, the probability of the observed shots, their xG values and
 the goals is:
@@ -179,7 +179,7 @@ the goals is:
 L(D \mid k_A, k_B) = \mathrm{Bin}(T;\ n, s/N)\, \mathrm{Bin}(S_A;\ T, q_A) \prod_{j} \mathrm{Hyp}(r_j \mid m, k_{(j)}, c)\, x_j^{G_j} (1 - x_j)^{1 - G_j}
 ```
 
-Here k\_(j) is the match-red count of the team that took shot j. Both shot counts and xG values carry information
+Here $k_{(j)}$ is the match-red count of the team that took shot j. Both shot counts and xG values carry information
 about red balls.
 
 ### How likely is a red-ball difference?
@@ -220,9 +220,9 @@ the inference overconfident, too much makes it more uncertain than needed.
 P(R_A - R_B = N \mid D) = \sum_{R_A - R_B = N} P(R_A, R_B \mid D)
 ```
 
-The same table also gives P(R\_A > R\_B), credible intervals for the difference, and so on.
+The same table also gives P($R_A$ > $R_B$), credible intervals for the difference, and so on.
 
-**Extension:** several teams playing each other: estimate all R\_i jointly. Start by holding opponents fixed at their current
+**Extension:** several teams playing each other: estimate all $R_i$ jointly. Start by holding opponents fixed at their current
 best estimate and updating one team at a time.
 
 ### Open questions for inference
@@ -243,6 +243,6 @@ best estimate and updating one team at a time.
 never observed:
 
 1. Pick known R values, simulate matches, run the inference.
-2. Repeat many times. An 80% credible interval for R\_A − R\_B should contain the true difference in about 80% of
+2. Repeat many times. An 80% credible interval for $R_A$ − $R_B$ should contain the true difference in about 80% of
    runs.
 3. If coverage is too low, the model is overconfident (usually m or the assumed drift K is wrong).

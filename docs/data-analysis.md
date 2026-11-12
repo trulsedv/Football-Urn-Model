@@ -8,8 +8,17 @@ Real data used to design the model and to set what it must reproduce: the analys
 
 One season of Premier League matches (2025/26) with per-shot xG from Understat, fetched with
 [soccerdata](https://github.com/probberechts/soccerdata). Per shot: match, team, home or away, xG, goal. Per team:
-final points. Own goals are excluded from shots. Run with `uv run shot-counts` and `uv run shot-quality`; code in
-`src/football_urn_model/`.
+final points. Own goals are excluded from shots. Code in `src/football_urn_model/`. Each script prints a summary
+table; the analyses also write a CSV and an interactive plotly HTML page to `output/`.
+
+```bash
+uv run shot-counts    # analysis 1: shots per match vs skill proxy difference
+uv run shot-quality   # analysis 2: xG per shot vs skill proxy difference
+uv run chapters       # analyses 6 and 7: the chapters of design.md, real vs simulated per skill proxy panel
+uv run calibrate      # fit the model to the real season and compare all statistics, real vs simulated (~1 minute)
+```
+
+What `calibrate` fits, and against which statistic, is in `fitting_plan()` in `src/football_urn_model/calibrate.py`.
 
 **Skill proxy.** For each match, d = final points of the home team − final points of the away team. Caveats: final
 points include the match itself, and points are a noisy measure of skill. Both are acceptable for a first look.
@@ -18,7 +27,7 @@ points include the match itself, and points are a noisy measure of skill. Both a
 
 1. **Shot counts vs d.** Bin d (e.g. 10-point bins). In each bin, look at the full distribution of home shots and
    away shots: mean, variance and histogram. This is the "3D landscape" P(k shots | d). Variance above what a
-   binomial predicts indicates matchday form and informs M\_u.
+   binomial predicts indicates matchday form and informs $M_u$.
 2. **Shot quality vs d.** Compare the per-shot xG distribution across bins of the shooting team's point advantage.
    Does the whole distribution shift, or only its mean?
 3. **Coupling of shot counts.** Within each bin of d, correlate home shots with away shots. A negative correlation
@@ -55,6 +64,9 @@ points include the match itself, and points are a noisy measure of skill. Both a
   1,114 xG but 927 goals (17% fewer). Penalties: 70 xG, 77 goals. Shots with xG between 0.1 and 0.7 convert
   clearly below their xG (e.g. 0.4–0.7: mean xG 0.52, goal rate 0.39). The reason is unknown; comparing with
   earlier seasons would show whether it is Understat's model or an unusual season.
+- **Analysis 6 — total shots per match by skill proxy terciles (`chapters.py`, Shot chapter of [design.md](design.md)).** Uses the seasons 2023/24, 2024/25 and 2025/26 (1,140 matches), with each team's final points in its own season as the skill proxy. Matches are split into terciles of the skill proxy difference and of the skill proxy sum, giving a 3×3 grid of panels with 99–164 real matches each. Each season's fixture list is simulated 100 times with the starting parameters, with the simulated final points as the proxy, binned with the same edges. The figure (`output/shot_grid.html`) shows per panel the real distribution as bars and the simulated one as a line, with the proxy ranges, match counts, and mean and sd in the panel title. The matches, mean, sd and skewness per panel are tabulated in [design.md](design.md). Shots per match differ between the seasons: 27.6 in 2023/24, 25.9 in 2024/25 and 25.0 in 2025/26.
+
+- **Analysis 7 — home share of shots per match by skill proxy terciles (`chapters.py`, Attack/defend chapter of [design.md](design.md)).** The same seasons, grid and simulated seasons as analysis 6, for the home team's share of the shots in each match. The figure (`output/attack_defend_grid.html`) shows per panel a histogram of the real shares (bins of 0.1) as bars and the simulated one as a line. The mean, sd and skewness per panel are tabulated in [design.md](design.md).
 
 ## What the model must reproduce
 

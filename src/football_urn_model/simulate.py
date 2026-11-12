@@ -138,12 +138,13 @@ def play_match(
             continue
         is_home, margin = yield from who_shoots(urns[True], urns[False], settings["who_shoots_draws"], rng)
         is_big_chance = margin >= settings["big_chance_margin"]
-        if is_big_chance:
-            marked_balls = (settings["big_chance_marked_red"], settings["big_chance_marked_white"])
-        else:
-            marked_balls = (settings["marked_red"], settings["marked_white"])
-
-        shot_urn_red, shot_urn_size = yield from build_shot_urn(urns, is_home, marked_balls, settings, rng)
+        shot_urn_red, shot_urn_size = yield from build_shot_urn(
+            urns,
+            settings,
+            rng,
+            is_home=is_home,
+            is_big_chance=is_big_chance,
+        )
         # Phase 6: one ball from the shot urn; red is a goal. Unmarked balls then go back into the match urns.
         is_goal = bool(rng.integers(shot_urn_size) < shot_urn_red)
         yield ("goal", is_home, is_big_chance, shot_urn_red / shot_urn_size, is_goal)
@@ -196,15 +197,16 @@ def who_shoots(
 
 def build_shot_urn(
     urns: dict[bool, tuple[int, int]],
-    is_home: bool,  # ruff: ignore[boolean-type-hint-positional-argument] - which team shoots, not a mode switch
-    marked_balls: tuple[int, int],
     settings: dict[str, int],
     rng: np.random.Generator,
+    *,
+    is_home: bool,
+    is_big_chance: bool,
 ) -> Generator[tuple, None, tuple[int, int]]:
-    """Phase 5: the defender's red balls cancel red chance balls, and the marked balls are added.
+    """Phase 5: the defender's red balls cancel red chance balls, and the marked balls for the kind of shot are added.
 
     Yields:
-        The shooter's draw of chance balls, then the defender's draw (with the shot urn it leaves).
+        The shooter's draw of chance balls, then the defender's draw with the shot urn it leaves (red, size).
 
     Returns:
         The shot urn as (red, size); its red share is the shot's xG.
@@ -212,19 +214,14 @@ def build_shot_urn(
     """
     (shooter_red, shooter_size), (defender_red, defender_size) = urns[is_home], urns[not is_home]
     chance_red = int(rng.hypergeometric(shooter_red, shooter_size - shooter_red, settings["chance_draws"]))
-    yield ("chance balls", is_home, settings["chance_draws"], chance_red)
+    yield ("chance balls", is_home, settings["chance_draws"], chance_red, is_big_chance)
     defender_drawn = int(rng.hypergeometric(defender_red, defender_size - defender_red, settings["defender_draws"]))
     cancelled = min(chance_red, defender_drawn)
-    marked_red, marked_white = marked_balls
+    if is_big_chance:
+        marked_red, marked_white = settings["big_chance_marked_red"], settings["big_chance_marked_white"]
+    else:
+        marked_red, marked_white = settings["marked_red"], settings["marked_white"]
     shot_urn_red = chance_red - cancelled + marked_red
     shot_urn_size = settings["chance_draws"] - cancelled + marked_red + marked_white
-    yield (
-        "defender balls",
-        not is_home,
-        settings["defender_draws"],
-        defender_drawn,
-        cancelled,
-        marked_red,
-        marked_white,
-    )
+    yield ("defender balls", not is_home, settings["defender_draws"], defender_drawn, shot_urn_red, shot_urn_size)
     return shot_urn_red, shot_urn_size  # ruff: ignore[return-in-generator] - read by play_match with yield from
