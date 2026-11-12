@@ -34,10 +34,11 @@ item below is to be decided or done as the chapters are written.
 - [ ] **`docs/design.md`.** Its phase chapters (Shot, Attack/defend, xG, Goal, Result) are the material for chapter
   5, and its equations overlap chapter 4. Decide whether it becomes chapter 5 or stays as working notes that chapter 5
   draws on, and remove the equations that chapter 4 now defines.
-- [ ] **`docs/considerations.md`.** "Future: inference" still says inference is not part of this project, which
-  contradicts goal 4 in `design.md`. Its decided choices and accepted simplifications are material for chapters 3 and
-  9, and its inference notes for chapter 6. Update the scope sentence now; move the rest as those chapters are
-  written.
+- [ ] **Fix the inference scope in `docs/considerations.md`.** The section "Future: inference" opens with "Not part
+  of this project, perhaps a later one", which contradicts goal 4 in `design.md`. Rename the section (for example to
+  "Inference") and replace that sentence with one saying that inference is part of this project.
+- [ ] **`docs/considerations.md`, the rest.** Its decided choices and accepted simplifications are material for
+  chapters 3 and 9, and its inference notes for chapter 6. Move them as those chapters are written.
 - [ ] **`docs/data-analysis.md`.** The data and figures behind chapter 5. Decide whether chapter 5 cites it or
   absorbs it.
 - [ ] **Outline, discussion notes and minutes** (`docs/report-outline.md`, `docs/discussion-notes-2026-11-12.md`,
