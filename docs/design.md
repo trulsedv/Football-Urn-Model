@@ -35,7 +35,19 @@ Real skill cannot be observed, so the project use uses final points of a season 
 
 ## Chapters
 
-This is basic training: the model is fitted to the basic observations of a match. Each chapter covers one part of a match and names its observables. It describes the model (the rules are in the [README](../README.md#how-to-play)) and gives equations for each observable given the output of the previous phase. Then, for each observable, it compares real and simulated data in a 3×3 grid of skill proxy sum and difference (terciles): a figure in [data-analysis.md](data-analysis.md), tables of matches, mean, standard deviation and skewness per panel (real / sim, with all matches and the theory above each table), a short evaluation and a one-sentence verdict. Phase 1 (skill change) is an input to the simulation, and phase 2 (match urn) and final points are left out for now.
+This is basic training: the model is fitted to the basic observations of a match. Each chapter covers one part of a match and names its observables. It describes the model (the rules are in the [README](../README.md#how-to-play)) and gives equations for each observable given the output of the previous phase. Then, for each observable, it compares real and simulated data in a 3×3 grid of skill proxy sum and difference (terciles): a figure, tables of mean, standard deviation and skewness per panel (real / sim, with all matches and the theory above each table), a short evaluation and a one-sentence verdict. Phase 1 (skill change) is an input to the simulation, and phase 2 (match urn) and final points are left out for now.
+
+The real data are the Premier League seasons 2023/24, 2024/25 and 2025/26 (Understat), with each team's final points in its own season as the skill proxy. Each real season's fixture list is simulated 100 times, with red balls $m_s$ from 10 (weakest team) to 25 (strongest team), scaled linearly with the real final points, and the simulated final points as the skill proxy. The tables and figures are made with `uv run chapters` (analyses 6 and 7 in [data-analysis.md](data-analysis.md)). The match-level chapters share the same matches in each panel:
+
+**Matches** (real / sim)
+
+All matches (real / sim): 1140 / 114000
+
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
+| --- | --- | --- | --- |
+| high [116 to 180 pts] | 136 / 10408 | 99 / 15848 | 133 / 9764 |
+| mid [96 to 115 pts] | 114 / 13317 | 164 / 20925 | 108 / 12500 |
+| low [34 to 95 pts] | 142 / 9843 | 107 / 12113 | 137 / 9282 |
 
 ## Shot (phase 3)
 
@@ -57,51 +69,41 @@ The tempo urn does not depend on the earlier phases. With $p = m_t / M_t$:
 
 ### Total shots per match
 
-Simulated 100 seasons with $n = 100$ and $m_t = 1$ and $M_t = 4$ ($p = 0.25$), and compared against the real Premier League 2025/26 season. See analysis 6 in [data-analysis.md](data-analysis.md)
-
-**Matches** (real / sim)
-
-All matches (real / sim): 380 / 38000
-
-| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
-| --- | --- | --- | --- |
-| high [112 to 163 pts] | 55 / 5086 | 19 / 4899 | 52 / 4797 |
-| mid [97 to 111 pts] | 28 / 4028 | 70 / 4686 | 24 / 3796 |
-| low [42 to 96 pts] | 50 / 3881 | 37 / 3153 | 45 / 3674 |
+Simulated with $n = 100$, $m_t = 1$ and $M_t = 4$ ($p = 0.25$), and compared against the three real seasons. Figure: `output/shot_grid.html`.
 
 **Mean** (real / sim)
 
-All matches (real / sim / theory): 24.96 / 24.99 / 25.00
+All matches (real / sim / theory): 26.14 / 24.97 / 25.00
 
-| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
 | --- | --- | --- | --- |
-| high [112 to 163 pts] | 24.98 / 25.01 | 27.32 / 25.00 | 25.77 / 25.02 |
-| mid [97 to 111 pts] | 24.00 / 24.95 | 24.43 / 25.07 | 23.96 / 25.08 |
-| low [42 to 96 pts] | 24.72 / 24.87 | 25.00 / 25.02 | 25.16 / 24.87 |
+| high [116 to 180 pts] | 26.18 / 24.95 | 26.54 / 25.03 | 26.99 / 24.92 |
+| mid [96 to 115 pts] | 25.75 / 24.98 | 25.19 / 24.96 | 26.55 / 24.96 |
+| low [34 to 95 pts] | 26.07 / 25.02 | 26.16 / 24.96 | 26.20 / 24.91 |
 
 **Standard deviation** (real / sim)
 
-All matches (real / sim / theory): 5.43 / 4.33 / 4.33
+All matches (real / sim / theory): 6.01 / 4.34 / 4.33
 
-| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
 | --- | --- | --- | --- |
-| high [112 to 163 pts] | 4.32 / 4.35 | 6.07 / 4.34 | 5.27 / 4.29 |
-| mid [97 to 111 pts] | 7.06 / 4.28 | 4.91 / 4.31 | 5.24 / 4.44 |
-| low [42 to 96 pts] | 5.99 / 4.30 | 5.12 / 4.46 | 5.89 / 4.26 |
+| high [116 to 180 pts] | 5.82 / 4.34 | 6.14 / 4.34 | 6.22 / 4.32 |
+| mid [96 to 115 pts] | 5.47 / 4.32 | 5.68 / 4.36 | 6.64 / 4.32 |
+| low [34 to 95 pts] | 5.59 / 4.35 | 5.58 / 4.32 | 6.82 / 4.34 |
 
 **Skewness** (real / sim)
 
-All matches (real / sim / theory): 0.23 / 0.12 / 0.12
+All matches (real / sim / theory): 0.42 / 0.13 / 0.12
 
-| Sum \ difference | low [-65 to -8 pts] | mid [-7 to 8 pts] | high [9 to 65 pts] |
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
 | --- | --- | --- | --- |
-| high [112 to 163 pts] | -0.19 / 0.15 | -0.66 / 0.15 | 0.58 / 0.18 |
-| mid [97 to 111 pts] | 0.28 / 0.03 | -0.30 / 0.08 | 0.41 / 0.15 |
-| low [42 to 96 pts] | 0.30 / 0.03 | 0.52 / 0.19 | 0.74 / 0.11 |
+| high [116 to 180 pts] | 0.65 / 0.12 | 0.48 / 0.16 | 0.21 / 0.12 |
+| mid [96 to 115 pts] | 0.06 / 0.08 | -0.03 / 0.14 | 0.35 / 0.14 |
+| low [34 to 95 pts] | 0.29 / 0.14 | 0.57 / 0.12 | 0.87 / 0.09 |
 
-The simulated mean, standard deviation and skewness match the theory, which confirms the equations. The mean fits the real data within about one shot in every panel except the thinnest (high sum, mid difference, 19 matches). The standard deviation is too small in 8 of 9 panels (real 4.3–7.1, simulated 4.3–4.5), and the theory shows that the tempo urn cannot reach the real 5.43. The real skewness jumps between panels (−0.66 to 0.74), which with 19–70 matches per panel is mostly noise, but over all matches it is higher than the model's (0.23 against 0.12).
+The simulated mean, standard deviation and skewness match the theory, which confirms the equations. The real mean is higher than the model's in every panel (by 0.2–2.1 shots), because the tempo urn was set from 2025/26 alone and the earlier seasons had more shots (27.6 per match in 2023/24, 25.9 in 2024/25, 25.0 in 2025/26). The standard deviation is too small in every panel (real 5.5–6.8, simulated 4.3–4.4), and the real one is too large for the tempo urn within each single season too (5.4–6.3). The real skewness is higher than the model's in most panels and over all matches (0.42 against 0.12).
 
-Verdict: the mean fits, but the spread of total shots between matches is too small, and the tempo urn alone cannot fix it.
+Verdict: the mean is close, but the spread of total shots between matches is too small, and the tempo urn alone cannot fix it.
 
 ## Attack/defend (phase 4)
 
@@ -115,13 +117,18 @@ other white. Parameters: $k_w$, and through the match urns $m_s$, $M_s$, $M_u$, 
 
 ### Equations
 
-Given the match urns:
+Given the match urns, each shot is the home team's with the same probability $q$: the probability of grabbing more red balls, plus the probability of a tie times the probability of winning the tie-break. $q$ is computed exactly from the two match urns, including putting all balls back when an urn runs empty. The number of shots $T$ comes from the tempo urn (phase 3), independently of $q$, so the home shots are binomial($T$, $q$) and the home share is $S$ = home shots / $T$:
 
-- Distribution: [eq]
-- Mean: [eq]
-- Variance: [eq]
+- Mean: $E[S \mid q] = q$
+- Variance: $\text{Var}(S \mid q) = q(1-q)\,E[1/T]$
+- Third central moment: $\mu_3(S \mid q) = q(1-q)(1-2q)\,E[1/T^2]$
 
-Averaged over the match urns (phase 2): [eq]
+Over the matches, $q$ varies with the match urns (phase 2) and with the teams that meet:
+
+- Mean: $E[q]$
+- Standard deviation: $\sigma = \sqrt{E[1/T]\,E[q(1-q)] + \text{Var}(q)}$. The first term is the noise from the limited number of shots, the second how much $q$ varies between matches.
+- Skewness: $\left(E[1/T^2]\,E[q(1-q)(1-2q)] + 3\,E[1/T]\,\text{Cov}(q, q(1-q)) + \mu_3(q)\right) / \sigma^3$
+- Distribution: not a standard one. Given $q$ it is a binomial divided by $T$, and over the matches a mixture of these, so its shape is judged from the figure.
 
 $k_w$ and the difference in red balls between teams both set how uneven the split of shots is. A larger $k_w$ gives
 the better team a bigger share, and more so when $M_u$ is small, since grabbing $k_w$ of a small match urn reveals
@@ -136,18 +143,41 @@ more of it. Example share of shots for A, $M_u$ = 20:
 
 ### Home share of shots per match
 
-| Home share of shots | Skill proxy difference | Skill proxy sum |
-| --- | --- | --- |
-| Mean | Depends (analysis 1) | Not checked |
-| Variance | Not checked | Not checked |
-| Shape | Not checked | Not checked |
+Simulated with $k_w = 3$, $M_u = 20$, $m_h = 1$ and $M_s = 100$. These are starting values, not fitted ones. Compared against the three real seasons. Figure: `output/attack_defend_grid.html`.
 
-The mean goes from X to Y rather linearly with changing skill proxy difference. For a given set of skills the
-distribution looks like X.
+**Mean** (real / sim)
 
-Figure: [3×3 grid, real vs simulated]
+All matches (real / sim / theory): 0.55 / 0.57 / 0.57
 
-Verdict: [one short sentence]
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
+| --- | --- | --- | --- |
+| high [116 to 180 pts] | 0.44 / 0.46 | 0.56 / 0.57 | 0.67 / 0.67 |
+| mid [96 to 115 pts] | 0.48 / 0.46 | 0.55 / 0.58 | 0.60 / 0.68 |
+| low [34 to 95 pts] | 0.45 / 0.46 | 0.53 / 0.59 | 0.65 / 0.71 |
+
+**Standard deviation** (real / sim)
+
+All matches (real / sim / theory): 0.17 / 0.23 / 0.23
+
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
+| --- | --- | --- | --- |
+| high [116 to 180 pts] | 0.17 / 0.21 | 0.12 / 0.22 | 0.14 / 0.20 |
+| mid [96 to 115 pts] | 0.17 / 0.22 | 0.13 / 0.22 | 0.16 / 0.20 |
+| low [34 to 95 pts] | 0.17 / 0.23 | 0.13 / 0.23 | 0.13 / 0.20 |
+
+**Skewness** (real / sim)
+
+All matches (real / sim / theory): -0.23 / -0.16 / -0.16
+
+| Sum \ difference | low [-75 to -11 pts] | mid [-10 to 11 pts] | high [12 to 75 pts] |
+| --- | --- | --- | --- |
+| high [116 to 180 pts] | 0.31 / 0.20 | -0.01 / -0.19 | -0.31 / -0.47 |
+| mid [96 to 115 pts] | -0.27 / 0.21 | -0.10 / -0.17 | -0.23 / -0.49 |
+| low [34 to 95 pts] | 0.12 / 0.27 | -0.52 / -0.16 | -0.52 / -0.57 |
+
+The simulated mean, standard deviation and skewness match the theory. The mean follows the real data in most panels, but rises too steeply with the difference in the mid- and low-sum rows (0.68–0.71 against 0.60–0.65 at high difference). The standard deviation is too large in every panel (simulated 0.20–0.23, real 0.12–0.17). By the variance equation, the limited number of shots gives about 0.09 of spread in both, so the excess is in how much $q$ varies between matches: about 0.21 in the model against about 0.14 in the real data. The skewness is negative at high difference in both, but more so in the model.
+
+Verdict: the mean is close with the starting red balls, but the home share varies far too much from match to match, because the probability of winning a shot varies too much between matches.
 
 ## xG (phase 5)
 

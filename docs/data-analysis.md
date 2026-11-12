@@ -14,7 +14,7 @@ table; the analyses also write a CSV and an interactive plotly HTML page to `out
 ```bash
 uv run shot-counts    # analysis 1: shots per match vs skill proxy difference
 uv run shot-quality   # analysis 2: xG per shot vs skill proxy difference
-uv run shot-chapter   # analysis 6: total shots per match by skill proxy terciles, real vs simulated
+uv run chapters       # analyses 6 and 7: the chapters of design.md, real vs simulated per skill proxy panel
 uv run calibrate      # fit the model to the real season and compare all statistics, real vs simulated (~1 minute)
 ```
 
@@ -64,7 +64,9 @@ points include the match itself, and points are a noisy measure of skill. Both a
   1,114 xG but 927 goals (17% fewer). Penalties: 70 xG, 77 goals. Shots with xG between 0.1 and 0.7 convert
   clearly below their xG (e.g. 0.4–0.7: mean xG 0.52, goal rate 0.39). The reason is unknown; comparing with
   earlier seasons would show whether it is Understat's model or an unusual season.
-- **Analysis 6 — total shots per match by skill proxy terciles (`shot_chapter.py`, Shot chapter of [design.md](design.md)).** Matches are split into terciles of the skill proxy difference (edges −8 and +8 points) and of the skill proxy sum (edges 96 and 111 points), giving a 3×3 grid of panels with 19–70 real matches each. A hundred simulated seasons with the starting parameters use their own simulated final points as the proxy, binned with the same edges. The figure (`output/shot_chapter_grid.html`) shows per panel the real distribution as bars and the simulated one as a line, with the proxy ranges, match counts, and mean and sd in the panel title. The matches, mean, sd and skewness per panel are tabulated in the Shot chapter of [design.md](design.md).
+- **Analysis 6 — total shots per match by skill proxy terciles (`chapters.py`, Shot chapter of [design.md](design.md)).** Uses the seasons 2023/24, 2024/25 and 2025/26 (1,140 matches), with each team's final points in its own season as the skill proxy. Matches are split into terciles of the skill proxy difference and of the skill proxy sum, giving a 3×3 grid of panels with 99–164 real matches each. Each season's fixture list is simulated 100 times with the starting parameters, with the simulated final points as the proxy, binned with the same edges. The figure (`output/shot_grid.html`) shows per panel the real distribution as bars and the simulated one as a line, with the proxy ranges, match counts, and mean and sd in the panel title. The matches, mean, sd and skewness per panel are tabulated in [design.md](design.md). Shots per match differ between the seasons: 27.6 in 2023/24, 25.9 in 2024/25 and 25.0 in 2025/26.
+
+- **Analysis 7 — home share of shots per match by skill proxy terciles (`chapters.py`, Attack/defend chapter of [design.md](design.md)).** The same seasons, grid and simulated seasons as analysis 6, for the home team's share of the shots in each match. The figure (`output/attack_defend_grid.html`) shows per panel a histogram of the real shares (bins of 0.1) as bars and the simulated one as a line. The mean, sd and skewness per panel are tabulated in [design.md](design.md).
 
 ## What the model must reproduce
 
