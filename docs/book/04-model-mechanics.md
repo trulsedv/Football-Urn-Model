@@ -27,9 +27,8 @@ $M_{xb}$ balls, $m_{xb}$ of them red, for a big chance. Where it does not matter
 set in use.
 
 The parameter values used as examples in this chapter are the model's current starting values, not fitted ones:
-$M_s = 100$, $M_u = 20$, $m_h = 1$, $n = 100$,
-$M_t = 4$, $m_t = 1$, $k_w = 3$, $k_c = 5$, $k_d = 1$, $b = 2$, $M_{xo} = 21$ with $m_{xo} = 1$, and $M_{xb} = 20$
-with $m_{xb} = 8$.
+$M_s = 100$, $M_u = 20$, $m_h = 1$, $n = 100$, $M_t = 4$, $m_t = 1$, $k_w = 3$, $k_c = 5$, $k_d = 1$, $b = 2$,
+$M_{xo} = 21$ with $m_{xo} = 1$, and $M_{xb} = 20$ with $m_{xb} = 8$.
 
 The chain maps onto the three layers of randomness from chapter 2. Skill change between matches acts on the skill
 pool. Match-day form is the draw from the skill pool into the match urn. Chance within the game is everything that
@@ -182,7 +181,8 @@ inference ever runs.
 Every draw in the chain has two properties that matter for fitting: its resolution and its variance. Resolution is
 the set of values a draw can produce, such as the 11 possible xG values of an ordinary shot. Variance is how widely
 those values spread from match to match or shot to shot. The data constrains the variance; the inference needs
-resolution, because each observed xG is matched to the nearest value the urns can produce.
+resolution, because each observed xG has to be assigned to one of the values the urns can produce. The rule for that
+assignment belongs to chapter 6 and is not yet chosen.
 
 The two are set by different things. The number of balls in a container sets which ratios are possible. The number
 of balls drawn sets how close the draw comes to the container's ratio: one ball is a coin flip with the largest
@@ -209,15 +209,16 @@ cannot follow it, and a further mechanism is needed, for example making the rati
 Total shots per match already break their ceiling. Over the Premier League seasons 2023/24 to 2025/26, real total
 shots have a mean of 26.1 and a standard deviation of 6.0, so their variance (about 36) is above their mean. No
 binomial can do that, and the simulated standard deviation is 4.3, as the equation says. The excess is there within
-each single season too, so it is not caused by pooling seasons. The tempo urn alone cannot match it; chapter 5 sets out the
-comparison.
+each single season too, so it is not caused by pooling seasons. The tempo urn alone cannot
+match it; chapter 5 sets out the comparison.
 
 The home share of shots errs the other way. With the starting values, the model's home share varies more from match
 to match than the real one: a standard deviation of 0.23 against 0.17. The limited number of shots accounts for the
 same part of the spread in both, so the excess is in how much $q$ varies between matches. That spread comes from
 form and from the gap in red balls between the teams, both set by parameters already in the model ($k_w$, $M_u$,
-$M_s$ and the red balls), and these are starting values, not fitted ones. The two findings together show that variance has to be checked observable by
-observable, since the model can be too quiet in one place and too noisy in another.
+$M_s$ and the red balls), and these are starting values, not fitted ones. The two findings together show that
+variance has to be checked observable by observable, since the model can be too quiet in one place and too noisy in
+another.
 
 Resolution also has a computational cost. More balls mean more paths through each draw, and every path must be
 enumerated for each cell of the inference table in chapter 6. The table is computed once, so the cost is paid once,
