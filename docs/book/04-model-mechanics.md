@@ -51,7 +51,7 @@ P(m_u = j) = \frac{\binom{m_s}{j}\binom{M_s - m_s}{M_u - j}}{\binom{M_s}{M_u}}
 $$
 
 - Mean: $E[m_u] = M_u p_s$
-- Variance: $\operatorname{Var}(m_u) = M_u p_s (1 - p_s) \dfrac{M_s - M_u}{M_s - 1}$
+- Variance: $\mathrm{Var}(m_u) = M_u p_s (1 - p_s) \dfrac{M_s - M_u}{M_s - 1}$
 - Skewness: $\dfrac{(M_s - 2 m_s)(M_s - 2 M_u)\sqrt{M_s - 1}}{(M_s - 2)\sqrt{M_u m_s (M_s - m_s)(M_s - M_u)}}$
 
 The home team then adds $x_H$ red h-marked balls to its match urn. Its match urn holds $M_u + x_H$ balls, of which
@@ -75,7 +75,7 @@ P(N = j) = \binom{n}{j}\, p_t^{\,j} (1 - p_t)^{n - j}
 $$
 
 - Mean: $E[N] = n p_t$
-- Variance: $\operatorname{Var}(N) = n p_t (1 - p_t)$
+- Variance: $\mathrm{Var}(N) = n p_t (1 - p_t)$
 - Skewness: $\dfrac{1 - 2p_t}{\sqrt{n p_t (1 - p_t)}}$
 
 ## 4.4 Who shoots
@@ -111,16 +111,16 @@ The home share of shots is $S = N_H / N$, for matches with at least one shot. Gi
 to the home team with probability $q$, independently of $N$, so $N_H$ is binomial with $N$ trials:
 
 - Mean: $E[S \mid q] = q$
-- Variance: $\operatorname{Var}(S \mid q) = q(1 - q)\,E[1/N]$
+- Variance: $\mathrm{Var}(S \mid q) = q(1 - q)\,E[1/N]$
 - Third central moment: $\mu_3(S \mid q) = q(1 - q)(1 - 2q)\,E[1/N^2]$
 
-Over matches between the same two teams, $q$ varies with the match urns. With $E[q]$, $\operatorname{Var}(q)$ and
+Over matches between the same two teams, $q$ varies with the match urns. With $E[q]$, $\mathrm{Var}(q)$ and
 $\mu_3(q)$ its moments over the draws of section 4.2:
 
 - Mean: $E[S] = E[q]$
-- Variance: $\operatorname{Var}(S) = E[1/N]\,E[q(1 - q)] + \operatorname{Var}(q)$
-- Skewness: $\big(E[1/N^2]\,E[q(1 - q)(1 - 2q)] + 3\,E[1/N]\,\operatorname{Cov}(q,\, q(1 - q)) + \mu_3(q)\big)
-  / \operatorname{Var}(S)^{3/2}$
+- Variance: $\mathrm{Var}(S) = E[1/N]\,E[q(1 - q)] + \mathrm{Var}(q)$
+- Skewness: $\big(E[1/N^2]\,E[q(1 - q)(1 - 2q)] + 3\,E[1/N]\,\mathrm{Cov}(q,\, q(1 - q)) + \mu_3(q)\big)
+  / \mathrm{Var}(S)^{3/2}$
 
 ## 4.5 The shot urn
 
@@ -178,8 +178,8 @@ Given the xG values $\text{xG}_1, \dots, \text{xG}_N$ of a team's shots in a mat
 probability equal to its xG, independently of the others. The team's goals $G$ then have:
 
 - Mean: $E[G] = \sum_j \text{xG}_j$
-- Variance: $\operatorname{Var}(G) = \sum_j \text{xG}_j (1 - \text{xG}_j)$
-- Skewness: $\sum_j \text{xG}_j (1 - \text{xG}_j)(1 - 2\,\text{xG}_j) \,/\, \operatorname{Var}(G)^{3/2}$
+- Variance: $\mathrm{Var}(G) = \sum_j \text{xG}_j (1 - \text{xG}_j)$
+- Skewness: $\sum_j \text{xG}_j (1 - \text{xG}_j)(1 - 2\,\text{xG}_j) \,/\, \mathrm{Var}(G)^{3/2}$
 
 Given only the match urns, every round gives the home team a goal with the same probability, since a round has at
 most one shot and every ball goes back:
@@ -219,5 +219,5 @@ P(G_H = i, G_A = j) = \frac{n!}{i!\,j!\,(n - i - j)!}\,\gamma_H^{\,i}\,\gamma_A^
 $$
 
 The probability of a home win is the sum of this over $i > j$, of a draw over $i = j$, and of an away win over
-$i < j$. Given the match urns, $\operatorname{Cov}(G_H, G_A) = -n \gamma_H \gamma_A$. Over matches between the same
+$i < j$. Given the match urns, $\mathrm{Cov}(G_H, G_A) = -n \gamma_H \gamma_A$. Over matches between the same
 two teams, the result probabilities are averaged over the match urns, weighted by $P(U_H)\,P(U_A)$.
