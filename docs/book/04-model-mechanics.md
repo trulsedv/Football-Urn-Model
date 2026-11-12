@@ -1,10 +1,9 @@
 # 4. Model mechanics
 
-This chapter sets out the urn chain exactly: every container, every draw and what each draw decides. The rules
-are the ones in the [README](../../README.md#how-to-play) and in [design.md](../design.md); where this chapter and
-those two differ, they are right and this chapter is wrong. The chapter follows one match from start to finish, then
-shows why the whole match can be computed rather than simulated, and closes with the tension between the resolution
-and the variance of the draws.
+This chapter defines the model: every container, every draw and what each draw decides. The rules stated here
+are the rules of the model, and anything that plays or computes the model follows them. The chapter follows one
+match from start to finish, then shows why the whole match can be computed rather than simulated, and closes with
+the tension between the resolution and the variance of the draws.
 
 ## 4.1 Containers and symbols
 
@@ -27,8 +26,8 @@ chance. The x-marked balls come in two sets: $M_{xo}$ balls, $m_{xo}$ of them re
 $M_{xb}$ balls, $m_{xb}$ of them red, for a big chance. Where it does not matter which, $M_x$ and $m_x$ stand for the
 set in use.
 
-The parameter values used as examples in this chapter are starting values, not fitted ones. They are taken from
-`model_settings()` in `src/football_urn_model/simulate.py`: $M_s = 100$, $M_u = 20$, $m_h = 1$, $n = 100$,
+The parameter values used as examples in this chapter are the model's current starting values, not fitted ones:
+$M_s = 100$, $M_u = 20$, $m_h = 1$, $n = 100$,
 $M_t = 4$, $m_t = 1$, $k_w = 3$, $k_c = 5$, $k_d = 1$, $b = 2$, $M_{xo} = 21$ with $m_{xo} = 1$, and $M_{xb} = 20$
 with $m_{xb} = 8$.
 
@@ -75,8 +74,7 @@ match urns.
 ## 4.3 Each round: shot or not
 
 Each of the $n$ rounds starts with one draw from the tempo urn, and red means a shot. White ends the round with
-nothing happening. The tempo urn is shared by the two teams and does not depend on their skill; this is the
-"neutral urn" of the design discussion.
+nothing happening. The tempo urn is shared by the two teams and does not depend on their skill.
 
 The tempo urn is independent of skill because the data showed no dependence. Total shots per match were the one
 observable whose mean did not move with the skill proxy (chapter 5). The model reproduces that by letting tempo be
@@ -91,12 +89,25 @@ is $\sqrt{18.75} \approx 4.33$. The variance is always below the mean, which is 
 When there is a shot, each team grabs $k_w$ balls from its match urn, and the team with more red balls shoots. The
 grab is without replacement, so each team's count of red balls is hypergeometric in its own match urn. A larger
 $k_w$ gives the better team a bigger share of the shots, and more so when $M_u$ is small, since a grab of $k_w$ then
-reveals more of the urn. Design.md has a table of shot shares for a range of $k_w$.
+reveals more of the urn. The table gives team A's share of the shots for some red shares and values of $k_w$,
+with $M_u = 20$ and no home advantage:
+
+| A red share | B red share | $k_w = 1$ | $k_w = 3$ | $k_w = 5$ | $k_w = 10$ |
+| --- | --- | --- | --- | --- | --- |
+| 0.55 | 0.45 | 0.60 | 0.64 | 0.67 | 0.77 |
+| 0.60 | 0.40 | 0.70 | 0.76 | 0.81 | 0.93 |
+| 0.30 | 0.20 | 0.64 | 0.67 | 0.71 | 0.82 |
+| 0.15 | 0.10 | 0.62 | 0.64 | 0.66 | 0.76 |
+
+The share depends on both red shares, not only on their difference. A gap of 0.1 gives team A 0.64 of the shots
+with $k_w = 3$ at red shares 0.55 and 0.45, and 0.67 at 0.30 and 0.20.
 
 A tie is broken one ball at a time. Each team draws one more ball from the balls left after its grab, and this
 repeats until one team draws red and the other white; that team shoots. If a team's urn runs empty, all balls go
-back and the tie-break continues from full urns. If both urns hold only one colour, a tie can never be broken; the
-simulator then settles it with a fair draw, which is an open question rather than a rule.
+back and the tie-break continues from full urns. If both urns hold only one colour, drawing can never break a tie;
+a fair draw then decides, one ball from an urn of one red and one white ball, with each colour standing for one
+team. The shot is then ordinary, like any tie-break win. This rule is provisional: it keeps the game playable, but it
+has not been checked against data.
 
 The margin of the grab decides whether the shot is a big chance. If the shooting team had at least $b$ more red
 balls in its grab, the shot is a big chance; otherwise it is ordinary. A team that wins in the tie-break never has a
@@ -198,8 +209,8 @@ cannot follow it, and a further mechanism is needed, for example making the rati
 Total shots per match already break their ceiling. Over the Premier League seasons 2023/24 to 2025/26, real total
 shots have a mean of 26.1 and a standard deviation of 6.0, so their variance (about 36) is above their mean. No
 binomial can do that, and the simulated standard deviation is 4.3, as the equation says. The excess is there within
-each single season too, so it is not caused by pooling seasons. The tempo urn alone cannot match it; the comparison
-is in the Shot chapter of [design.md](../design.md).
+each single season too, so it is not caused by pooling seasons. The tempo urn alone cannot match it; chapter 5 sets out the
+comparison.
 
 The home share of shots errs the other way. With the starting values, the model's home share varies more from match
 to match than the real one: a standard deviation of 0.23 against 0.17. The limited number of shots accounts for the
