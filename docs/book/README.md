@@ -48,13 +48,19 @@ item below is to be decided or done as the chapters are written.
   is played and how the mean, variance and skewness of each step follow from the step before. Resolution against
   variance is in chapter 5, and the independence of rounds in chapter 3. Change the descriptions of chapters 3, 4 and
   5 to match.
-- [ ] **Unbreakable ties in phase 4.** Chapter 4 states a provisional rule (a fair draw). Replace it with a final
-  rule, or list it under known limitations, and make the code and the README match.
+- [ ] **Unbreakable ties in phase 4.** Chapter 4 leaves out the case where a tie can never be broken: both match
+  urns all red, or both all white, which needs $x_H = 0$. The simulator settles it with a fair draw. Decide whether
+  the code keeps that, and whether chapter 9 mentions it.
+- [ ] **Notation.** Chapter 4 uses a revised set of symbols: $K$ and $k$ for drawn balls and the red among them, $X$
+  and $x$ for marked balls, subscripts $s$, $a$ and $d$ for the shot, attack and defence draws, $N$ for shots, $p_t$
+  for the shot probability per round, and $H$ and $A$ for home and away. Rename the symbols in the README,
+  `design.md`, `considerations.md` and the code comments to match, or drop them there.
 
 ## To do: material moved out of chapter 4
 
 Chapter 4 was cut down to the rules and the moments of each step. The parts below were taken out and belong in
-other chapters. The text as it was is in commit `8bb8053`, `docs/book/04-model-mechanics.md`, sections 4.1 to 4.8.
+other chapters. The text as it was is in commits `8bb8053` (sections 4.1 to 4.8) and `e8b314f` (the table and
+comments on the moments), in `docs/book/04-model-mechanics.md`.
 
 - [ ] **Chapter 3, From theory to model.**
   - How the urn chain maps onto chapter 2's three layers of randomness. The skill pool is skill, the draw into the
@@ -81,6 +87,17 @@ other chapters. The text as it was is in commit `8bb8053`, `docs/book/04-model-m
     - The model's home share of shots varies more than the real one: 0.23 against 0.17.
   - That the model records the same quantities per shot as real data does, which is what makes the comparison
     possible.
+  - What the moments in chapter 4 mean for fitting:
+    - The match-urn variance is zero when $M_s = M_u$ and rises towards $M_u p_s (1 - p_s)$ as $M_s$ grows.
+    - The binomial shot count has its variance below its mean; with the starting values, 25 shots, a standard
+      deviation of 4.33 and a skewness of 0.12.
+    - The home share's variance has two parts: noise from the limited number of shots, and how much $q$ varies
+      between matches.
+    - How $K_s$ and the two red shares set the probability of attacking. The table from chapter 4 had this for
+      match urns of 20 balls and no home advantage; for example, red shares 0.55 against 0.45 give 0.64 with
+      $K_s = 3$ and 0.77 with $K_s = 10$.
+    - The xG resolution: with the starting values, each kind of shot can take 11 values, from 0.04 to 0.23 for an
+      ordinary chance and from 0.32 to 0.52 for a big chance.
 - [ ] **Chapter 6, Inference.**
   - The exact computation of a whole match from the two skill pools: the outcomes of one round, the enumeration of
     the attack-versus-defence draw, and the weighting over match urns. Chapter 4 now gives the pieces (sections 4.2
