@@ -20,8 +20,8 @@ League seasons. Each team's skill is the number of red balls in its skill pool.
    urns and balls. No step may use a fitted function or continuous distribution.
 3. **Skill separate from form:** skill is the skill pool, which changes slowly and only as set by whoever runs the
    simulation. Matchday form is the match urn, a separate and faster source of randomness.
-4. **Ready for inference later:** every probability in the model can be written down exactly, so that a later
-   project can infer the red balls in each skill pool from observed data. Inference is not part of this project.
+4. **Built for inference:** every probability in the model can be written down exactly, so that the red balls in
+   each team's skill pool can be inferred from observed matches. Inference is part of this project.
 
 ## Fundamental approximation
 
