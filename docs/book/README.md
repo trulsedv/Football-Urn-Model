@@ -59,8 +59,8 @@ item below is to be decided or done as the chapters are written.
 ## To do: material moved out of chapter 4
 
 Chapter 4 was cut down to the rules and the moments of each step. The parts below were taken out and belong in
-other chapters. The text as it was is in commits `8bb8053` (sections 4.1 to 4.8) and `e8b314f` (the table and
-comments on the moments), in `docs/book/04-model-mechanics.md`.
+other chapters. The text as it was is in commits `8bb8053` (sections 4.1 to 4.8), `e8b314f` (the table and
+comments on the moments) and `a508f78` (the stacked equations), in `docs/book/04-model-mechanics.md`.
 
 - [ ] **Chapter 3, From theory to model.**
   - How the urn chain maps onto chapter 2's three layers of randomness. The skill pool is skill, the draw into the
@@ -99,7 +99,12 @@ comments on the moments), in `docs/book/04-model-mechanics.md`.
     - The xG resolution: with the starting values, each kind of shot can take 11 values, from 0.04 to 0.23 for an
       ordinary chance and from 0.32 to 0.52 for a big chance.
 - [ ] **Chapter 6, Inference.**
-  - The exact computation of a whole match from the two skill pools: the outcomes of one round, the enumeration of
-    the attack-versus-defence draw, and the weighting over match urns. Chapter 4 now gives the pieces (sections 4.2
-    to 4.7); chapter 6 should put them together as the likelihood and the lookup table.
+  - The exact computation of a whole match from the two skill pools. Chapter 4 gives each step's equations given a
+    known outcome of the step before; chapter 6 stacks them, weighting each outcome by its probability from the step
+    before, into the likelihood and the lookup table. Chapter 5 needs the same stacking to compare the model's
+    moments with real matches. The stacked forms drafted earlier are in commit `a508f78`:
+    - the home share of shots over the match urns, with $E[1/N]$ and the variance of $q$;
+    - a team's xG per shot as a mix of ordinary and big chances, and its distribution over the match urns;
+    - the per-round goal probability $\gamma$, with binomial goals given the match urns;
+    - the result as a multinomial over the rounds, given the match urns.
   - The rule for assigning a continuous observed xG to one of the values the urns can produce.

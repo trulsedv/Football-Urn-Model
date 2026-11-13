@@ -35,8 +35,9 @@ the model's current values and are not fitted.
 | $X_b$, $x_b$ | x-marked balls and red x-marked balls for a big chance | 20 and 8 |
 | $X$, $x$ | Whichever x-marked set the shot uses | – |
 
-The subscripts $H$ and $A$ mark the home and away team, and $U_H$ and $U_A$ are their match urns. The lowercase $a$
-is the attacking team, whichever side it is on.
+The subscripts $H$ and $A$ mark the home and away team, for example $m_{u,H}$ and $m_{u,A}$ for the red balls each
+team draws into its match urn. The lowercase subscripts $a$ and $d$ mark the attacking and the defending team,
+whichever side each is on.
 
 ## 4.2 Before the match: skill pool and match urn
 
@@ -55,7 +56,7 @@ $$
 - Skewness: $\dfrac{(M_s - 2 m_s)(M_s - 2 M_u)\sqrt{M_s - 1}}{(M_s - 2)\sqrt{M_u m_s (M_s - m_s)(M_s - M_u)}}$
 
 The home team then adds $x_H$ red h-marked balls to its match urn. Its match urn holds $M_u + x_H$ balls, of which
-$m_u + x_H$ are red. The h-marked balls are added, not drawn, so they add exactly $x_H$ to the home team's red balls:
+$m_{u,H} + x_H$ are red; the away team's holds $M_u$ balls, of which $m_{u,A}$ are red. The h-marked balls are added, not drawn, so they add exactly $x_H$ to the home team's red balls:
 the mean becomes $M_u p_s + x_H$, and the variance and skewness stay as above.
 
 The match urns stay the same for the whole match. Every ball drawn from a match urn during a round goes back before
@@ -91,36 +92,55 @@ The shot is a big chance if the attacking team drew at least $b$ more red balls 
 it is an ordinary chance. A shot won in the tie-break is always an ordinary chance. All drawn balls then go back into
 the match urns.
 
-The probability that the home team attacks follows from the two draws. Let $k_{s,H}$ and $k_{s,A}$ be the red balls
-the home and away team draw; each is hypergeometric in its own match urn. The probability $q$ that the home team
-attacks, and the probabilities $\beta_H$ and $\beta_A$ that the shot is a home or an away big chance, are:
+The two draws are hypergeometric in the two match urns. With $k_{s,H}$ and $k_{s,A}$ the red balls the home and
+away team draw:
 
 $$
-q = P(k_{s,H} > k_{s,A}) + P(k_{s,H} = k_{s,A})\,P(\text{home wins the tie-break})
+P(k_{s,H} = i) = \frac{\binom{m_{u,H} + x_H}{i}\binom{M_u - m_{u,H}}{K_s - i}}{\binom{M_u + x_H}{K_s}}, \qquad
+P(k_{s,A} = j) = \frac{\binom{m_{u,A}}{j}\binom{M_u - m_{u,A}}{K_s - j}}{\binom{M_u}{K_s}}
+$$
+
+The tie-break is a recursion on the balls left in the two match urns. With $r_H$ red balls among $\ell_H$ left in the
+home team's match urn and $r_A$ among $\ell_A$ in the away team's, the probability $t$ that the home team wins the
+tie-break is
+
+$$
+t(r_H, \ell_H, r_A, \ell_A) = \frac{r_H}{\ell_H}\Big(1 - \frac{r_A}{\ell_A}\Big)
++ \frac{r_H}{\ell_H}\,\frac{r_A}{\ell_A}\; t(r_H - 1, \ell_H - 1, r_A - 1, \ell_A - 1)
++ \Big(1 - \frac{r_H}{\ell_H}\Big)\Big(1 - \frac{r_A}{\ell_A}\Big)\; t(r_H, \ell_H - 1, r_A, \ell_A - 1)
+$$
+
+When $\ell_H$ or $\ell_A$ reaches zero, all balls go back, and $t$ takes its value from the full match urns,
+$t^* = t(m_{u,H} + x_H,\ M_u + x_H,\ m_{u,A},\ M_u)$. Every path then ends either in a winner or in $t^*$, so $t^*$
+is the solution of one linear equation. A tie at $i$ red balls each starts the tie-break from
+$t_i = t(m_{u,H} + x_H - i,\ M_u + x_H - K_s,\ m_{u,A} - i,\ M_u - K_s)$.
+
+The probability $q$ that the home team attacks, and the probabilities $\beta_H$ and $\beta_A$ that the shot is a home
+or an away big chance, are then
+
+$$
+q = \sum_{i > j} P(k_{s,H} = i)\,P(k_{s,A} = j) + \sum_i P(k_{s,H} = i)\,P(k_{s,A} = i)\,t_i
 $$
 
 $$
-\beta_H = P(k_{s,H} - k_{s,A} \ge b), \qquad \beta_A = P(k_{s,A} - k_{s,H} \ge b)
+\beta_H = \sum_{i - j \ge b} P(k_{s,H} = i)\,P(k_{s,A} = j), \qquad
+\beta_A = \sum_{j - i \ge b} P(k_{s,H} = i)\,P(k_{s,A} = j)
 $$
 
-Each probability over the draws is a double sum, for example
-$P(k_{s,H} > k_{s,A}) = \sum_{i > j} P(k_{s,H} = i)\,P(k_{s,A} = j)$. The probability of winning the tie-break is a
-finite sum over the balls left in the two match urns.
+Each shot is therefore, independently of the others, a home ordinary chance with probability $q - \beta_H$, a home
+big chance with probability $\beta_H$, an away ordinary chance with probability $1 - q - \beta_A$, or an away big
+chance with probability $\beta_A$.
 
-The home share of shots is $S = N_H / N$, for matches with at least one shot. Given the match urns, every shot goes
-to the home team with probability $q$, independently of $N$, so $N_H$ is binomial with $N$ trials:
+Given the $N$ shots of section 4.3, the home team's shots $N_H$ are binomial, and the home share of shots is
+$S = N_H / N$:
 
-- Mean: $E[S \mid q] = q$
-- Variance: $\mathrm{Var}(S \mid q) = q(1 - q)\,E[1/N]$
-- Third central moment: $\mu_3(S \mid q) = q(1 - q)(1 - 2q)\,E[1/N^2]$
+$$
+P(N_H = j) = \binom{N}{j}\, q^{\,j} (1 - q)^{N - j}
+$$
 
-Over matches between the same two teams, $q$ varies with the match urns. With $E[q]$, $\mathrm{Var}(q)$ and
-$\mu_3(q)$ its moments over the draws of section 4.2:
-
-- Mean: $E[S] = E[q]$
-- Variance: $\mathrm{Var}(S) = E[1/N]\,E[q(1 - q)] + \mathrm{Var}(q)$
-- Skewness: $\big(E[1/N^2]\,E[q(1 - q)(1 - 2q)] + 3\,E[1/N]\,\mathrm{Cov}(q,\, q(1 - q)) + \mu_3(q)\big)
-  / \mathrm{Var}(S)^{3/2}$
+- Mean: $E[S] = q$
+- Variance: $\mathrm{Var}(S) = q(1 - q) / N$
+- Skewness: $\dfrac{1 - 2q}{\sqrt{N q (1 - q)}}$
 
 ## 4.5 The shot urn
 
@@ -137,87 +157,57 @@ $$
 \text{xG} = g(k_a, k_d) = \frac{x + k_a - c}{X + K_a - c}
 $$
 
-Given the match urns and the kind of shot, the xG distribution is a finite sum. The balls from section 4.4 went
-back, so $k_a$ and $k_d$ are hypergeometric in the attacking and defending team's full match urns, independent of
-each other. With $P(i, j) = P(k_a = i)\,P(k_d = j)$:
+The two draws are hypergeometric in the two match urns. Let the attacking team's match urn hold $M_{u,a}$ balls,
+$m_{u,a}$ of them red, and the defending team's $M_{u,d}$ balls, $m_{u,d}$ of them red; for the home team these are
+$M_u + x_H$ and $m_{u,H} + x_H$, and for the away team $M_u$ and $m_{u,A}$. The balls from section 4.4 went back,
+so both draws are from full match urns:
+
+$$
+P(k_a = i) = \frac{\binom{m_{u,a}}{i}\binom{M_{u,a} - m_{u,a}}{K_a - i}}{\binom{M_{u,a}}{K_a}}, \qquad
+P(k_d = j) = \frac{\binom{m_{u,d}}{j}\binom{M_{u,d} - m_{u,d}}{K_d - j}}{\binom{M_{u,d}}{K_d}}
+$$
+
+Given the kind of shot, the xG distribution is a finite sum over the two draws. With
+$P(i, j) = P(k_a = i)\,P(k_d = j)$ and $x$, $X$ the x-marked set for that kind of shot:
 
 - Distribution: $P(\text{xG} = v) = \sum_{g(i, j) = v} P(i, j)$
 - Mean: $\mu = \sum_{i, j} P(i, j)\,g(i, j)$
 - Variance: $\sigma^2 = \sum_{i, j} P(i, j)\,\big(g(i, j) - \mu\big)^2$
 - Skewness: $\sum_{i, j} P(i, j)\,\big(g(i, j) - \mu\big)^3 / \sigma^3$
 
-With the ordinary set these are $\mu_o$, $\sigma_o$ and the third central moment $\mu_{3,o}$; with the big-chance
-set, $\mu_b$, $\sigma_b$ and $\mu_{3,b}$.
-
-A team's shots are a mix of the two kinds. Given the match urns, a home shot is a big chance with probability
-$f_b = \beta_H / q$, and an away shot with probability $f_b = \beta_A / (1 - q)$; in both cases $f_o = 1 - f_b$.
-With $\bar\mu = f_o \mu_o + f_b \mu_b$, the xG of the team's shots has:
-
-- Mean: $\bar\mu$
-- Variance: $f_o \sigma_o^2 + f_b \sigma_b^2 + f_o f_b (\mu_b - \mu_o)^2$
-- Third central moment: $\sum_{k \in \{o, b\}} f_k \big(\mu_{3,k} + 3\sigma_k^2(\mu_k - \bar\mu) + (\mu_k - \bar\mu)^3\big)$
-
-Over matches between the same two teams, each pair of match urns counts in proportion to its probability and to how
-many shots the team gets with it. For the home team:
-
-$$
-P(\text{xG} = v) = \frac{\sum_{U_H, U_A} P(U_H)\,P(U_A)\,\big[(q - \beta_H)\,P_o(v) + \beta_H\,P_b(v)\big]}
-{\sum_{U_H, U_A} P(U_H)\,P(U_A)\,q}
-$$
-
-where $q$, $\beta_H$ and the ordinary and big-chance distributions $P_o$ and $P_b$ belong to each pair of match urns.
-The moments follow from this distribution in the same way.
-
 ## 4.6 The goal
 
 One ball is drawn from the shot urn, and a red ball is a goal. The x-marked balls are then taken out, and all of the
-attacking team's drawn balls, the cancelled ones included, go back into its match urn. For each shot the model records the round, the
-attacking team, the xG and whether it was a goal.
+attacking team's drawn balls, the cancelled ones included, go back into its match urn. For each shot the model
+records the round, the attacking team, the xG and whether it was a goal.
 
-Given the xG values $\text{xG}_1, \dots, \text{xG}_N$ of a team's shots in a match, each shot is a goal with
-probability equal to its xG, independently of the others. The team's goals $G$ then have:
+Given the shot's xG, the goal is a single draw that succeeds with probability xG:
 
-- Mean: $E[G] = \sum_j \text{xG}_j$
-- Variance: $\mathrm{Var}(G) = \sum_j \text{xG}_j (1 - \text{xG}_j)$
-- Skewness: $\sum_j \text{xG}_j (1 - \text{xG}_j)(1 - 2\,\text{xG}_j) \,/\, \mathrm{Var}(G)^{3/2}$
+- Mean: $\text{xG}$
+- Variance: $\text{xG}\,(1 - \text{xG})$
+- Skewness: $\dfrac{1 - 2\,\text{xG}}{\sqrt{\text{xG}\,(1 - \text{xG})}}$
 
-Given only the match urns, every round gives the home team a goal with the same probability, since a round has at
-most one shot and every ball goes back:
-
-$$
-\gamma_H = p_t\,\big[(q - \beta_H)\,\mu_o + \beta_H\,\mu_b\big]
-$$
-
-with $\mu_o$ and $\mu_b$ the mean xG of the home team's ordinary and big chances from section 4.5. For the away
-team, with $\mu_o$ and $\mu_b$ its own mean xG:
+A team's goals in a match add up these draws, one for each of its shots. With $\text{xG}_1, \dots, \text{xG}_{N_H}$
+the xG values of the home team's shots, its goals $G_H$ have the distribution given by the coefficients of $z^g$ in a
+product with one factor per shot:
 
 $$
-\gamma_A = p_t\,\big[(1 - q - \beta_A)\,\mu_o + \beta_A\,\mu_b\big]
+\sum_g P(G_H = g)\, z^g = \prod_{j=1}^{N_H} \big(1 - \text{xG}_j + \text{xG}_j\, z\big)
 $$
 
-The home goals $G_H$ are binomial, and the away goals $G_A$ the same with $\gamma_A$:
+- Mean: $E[G_H] = \sum_j \text{xG}_j$
+- Variance: $\mathrm{Var}(G_H) = \sum_j \text{xG}_j (1 - \text{xG}_j)$
+- Skewness: $\sum_j \text{xG}_j (1 - \text{xG}_j)(1 - 2\,\text{xG}_j) \,/\, \mathrm{Var}(G_H)^{3/2}$
 
-$$
-P(G_H = j) = \binom{n}{j}\, \gamma_H^{\,j} (1 - \gamma_H)^{n - j}
-$$
-
-- Mean: $n \gamma_H$
-- Variance: $n \gamma_H (1 - \gamma_H)$
-- Skewness: $\dfrac{1 - 2\gamma_H}{\sqrt{n \gamma_H (1 - \gamma_H)}}$
-
-Over matches between the same two teams, the goals are a mixture of these binomials over the match urns, weighted
-by $P(U_H)\,P(U_A)$.
+The away team's goals $G_A$ are the same over its $N_A$ shots.
 
 ## 4.7 The result
 
-The result follows from the goals of the two teams. Given the match urns, each round ends in a home goal with
-probability $\gamma_H$, an away goal with probability $\gamma_A$, or neither, so the two goal counts are multinomial
-over the $n$ rounds:
+The result follows from the goals of the two teams. Given the xG values of both teams' shots, every shot's goal
+draw is separate, so $G_H$ and $G_A$ are independent:
 
 $$
-P(G_H = i, G_A = j) = \frac{n!}{i!\,j!\,(n - i - j)!}\,\gamma_H^{\,i}\,\gamma_A^{\,j}\,(1 - \gamma_H - \gamma_A)^{n - i - j}
+P(\text{home win}) = \sum_{i > j} P(G_H = i)\,P(G_A = j), \qquad
+P(\text{draw}) = \sum_i P(G_H = i)\,P(G_A = i), \qquad
+P(\text{away win}) = \sum_{i < j} P(G_H = i)\,P(G_A = j)
 $$
-
-The probability of a home win is the sum of this over $i > j$, of a draw over $i = j$, and of an away win over
-$i < j$. Given the match urns, $\mathrm{Cov}(G_H, G_A) = -n \gamma_H \gamma_A$. Over matches between the same
-two teams, the result probabilities are averaged over the match urns, weighted by $P(U_H)\,P(U_A)$.
