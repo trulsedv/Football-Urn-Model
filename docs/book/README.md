@@ -48,6 +48,11 @@ item below is to be decided or done as the chapters are written.
   is played and how the mean, variance and skewness of each step follow from the step before. Resolution against
   variance is in chapter 5, and the independence of rounds in chapter 3. Change the descriptions of chapters 3, 4 and
   5 to match.
+- [ ] **Consider a simpler who-shoots rule.** The tie-break in section 4.4 needs a recursion with a put-back when an
+  urn runs empty. An alternative: on a tie, put all drawn balls back and both teams draw $K_s$ balls again. Then
+  $q = P(k_{s,H} > k_{s,A}) / \big(1 - P(k_{s,H} = k_{s,A})\big)$, and a redraw can also give a big chance, so
+  $\beta_H$ and $\beta_A$ are divided by the same factor. Both urns all red would still tie for ever. Decide, then
+  change chapter 4, the README and the code together.
 - [ ] **Unbreakable ties in phase 4.** Chapter 4 leaves out the case where a tie can never be broken: both match
   urns all red, or both all white, which needs $x_H = 0$. The simulator settles it with a fair draw. Decide whether
   the code keeps that, and whether chapter 9 mentions it.
