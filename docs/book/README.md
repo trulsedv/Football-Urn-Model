@@ -48,6 +48,11 @@ item below is to be decided or done as the chapters are written.
   is played and how the mean, variance and skewness of each step follow from the step before. Resolution against
   variance is in chapter 5, and the independence of rounds in chapter 3. Change the descriptions of chapters 3, 4 and
   5 to match.
+- [ ] **Decide how the combined equations are handled.** Chapter 4 gives each step given the outcome of the step
+  before, and combines them only once, numerically, in the running example (section 4.8). Open: whether the combined
+  equations are needed in every chapter that uses them, or whether combining numerically (a weighted sum over the
+  outcomes of earlier steps) is enough everywhere. If numerically is enough, reword the chapter 6 item below and drop
+  its list of closed forms.
 - [ ] **Consider a simpler who-shoots rule.** The tie-break in section 4.4 needs a recursion with a put-back when an
   urn runs empty. An alternative: on a tie, put all drawn balls back and both teams draw $K_s$ balls again. Then
   $q = P(k_{s,H} > k_{s,A}) / \big(1 - P(k_{s,H} = k_{s,A})\big)$, and a redraw can also give a big chance, so
