@@ -16,7 +16,7 @@ The model uses four kinds of urn and two kinds of marked ball, and every ball is
 
 The symbols follow one pattern. $M$ and $m$ count the balls and the red balls an urn holds, $K$ and $k$ the balls
 and the red balls a team draws, and $X$ and $x$ the marked balls and the red marked balls. The starting values are
-the model's current values and are not fitted.
+the model's current values and are not fitted. Chapter 7 sets them, by tuning them on simulated seasons.
 
 | Symbol | Meaning | Starting value |
 | --- | --- | --- |
@@ -157,7 +157,11 @@ $$
 0.4211, 0.4511, 0.1203 and 0.0075; with 2 out of 20, the away team draws $k_{s,A} = 0, 1, 2$ with probabilities
 0.7158, 0.2684 and 0.0158. A home big chance needs $k_{s,H} - k_{s,A} \ge 2$, which happens for $(2, 0)$, $(3, 0)$
 and $(3, 1)$ with probabilities 0.0861, 0.0054 and 0.0020. So $\beta_H = 0.0935$. A big chance is never won in the
-tie-break, so the tie-break is not needed here.
+tie-break, so $\beta_H$ does not need it.
+
+The tie-break decides who shoots in a large share of the shots. The two teams draw the same number of red balls with
+probability 0.4244, and the home team draws more with probability 0.4488. With the tie-break, the home team attacks
+with probability $q = 0.7799$.
 
 ## 4.5 The shot urn
 
@@ -177,7 +181,8 @@ $$
 The two draws are hypergeometric in the two match urns. Let the attacking team's match urn hold $M_{u,a}$ balls,
 $m_{u,a}$ of them red, and the defending team's $M_{u,d}$ balls, $m_{u,d}$ of them red; for the home team these are
 $M_u + x_H$ and $m_{u,H} + x_H$, and for the away team $M_u$ and $m_{u,A}$. The balls from section 4.4 went back,
-so both draws are from full match urns:
+so both draws are from full match urns. The h-marked balls count in both draws, so home advantage helps the home
+team when it defends as well as when it attacks, and this is intended:
 
 $$
 P(k_a = i) = \frac{\binom{m_{u,a}}{i}\binom{M_{u,a} - m_{u,a}}{K_a - i}}{\binom{M_{u,a}}{K_a}}, \qquad

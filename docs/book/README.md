@@ -118,3 +118,6 @@ comments on the moments) and `a508f78` (the stacked equations), in `docs/book/04
     - the per-round goal probability $\gamma$, with binomial goals given the match urns;
     - the result as a multinomial over the rounds, given the match urns.
   - The rule for assigning a continuous observed xG to one of the values the urns can produce.
+  - Open the chapter with the probability of a result from the two skill pools, on the running example match of
+    chapter 4 ($m_{s,H} = 18$, $m_{s,A} = 12$). Chapter 4's example ends on a single event; the result sums over
+    every path through the chain.
