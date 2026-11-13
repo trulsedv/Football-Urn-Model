@@ -53,14 +53,23 @@ item below is to be decided or done as the chapters are written.
   equations are needed in every chapter that uses them, or whether combining numerically (a weighted sum over the
   outcomes of earlier steps) is enough everywhere. If numerically is enough, reword the chapter 6 item below and drop
   its list of closed forms.
-- [ ] **Consider a simpler who-shoots rule.** The tie-break in section 4.4 needs a recursion with a put-back when an
-  urn runs empty. An alternative: on a tie, put all drawn balls back and both teams draw $K_s$ balls again. Then
-  $q = P(k_{s,H} > k_{s,A}) / \big(1 - P(k_{s,H} = k_{s,A})\big)$, and a redraw can also give a big chance, so
-  $\beta_H$ and $\beta_A$ are divided by the same factor. Both urns all red would still tie for ever. Decide, then
-  change chapter 4, the README and the code together.
-- [ ] **Unbreakable ties in phase 4.** Chapter 4 leaves out the case where a tie can never be broken: both match
-  urns all red, or both all white, which needs $x_H = 0$. The simulator settles it with a fair draw. Decide whether
-  the code keeps that, and whether chapter 9 mentions it.
+- [ ] **Switch to the redraw rule for who shoots (decided).** Replace the tie-break in section 4.4 with a redraw:
+  on a tie, all drawn balls go back and both teams draw $K_s$ balls again, until one team draws more red balls.
+  - Why: the equations become much simpler, and every mechanic that needs tuning is kept. The big-chance share is
+    still set by $b$, $K_s$ and the x-marked sets, so chapter 5 can fit it.
+  - The new equations: $q = P(k_{s,H} > k_{s,A}) / \big(1 - P(k_{s,H} = k_{s,A})\big)$. A redraw can also give a
+    big chance, so $\beta_H$ and $\beta_A$ are divided by the same factor, $1 - P(k_{s,H} = k_{s,A})$.
+  - What changes in the running example: $q$ stays at 0.780 ($0.4488 / (1 - 0.4244)$), but $\beta_H$ rises from
+    0.0935 to 0.1625 and $\beta_A$ from 0.0066 to 0.0115. Update the 4.4 and 4.8 example numbers to match.
+  - The edge case, as one sentence in 4.4, worded so it still holds after tuning: a tie can only repeat for ever if
+    every ball in both match urns is red, which needs each team to draw only red balls from its skill pool; for any
+    skill pool with far fewer red balls than the match urn holds, this is so unlikely that the model ignores it.
+    With the starting values, a team with 25 red balls draws 20 red with probability about $10^{-16}$, and both
+    teams must do it. All white cannot happen while the home team's h-marked balls are red.
+  - Remove from the chapter: the recursion $t$, $t^*$ and $t_i$, and the sentence that a tie-break never gives a big
+    chance. Remove from the code: the tie-break and the fair-draw rule for unbreakable ties.
+  - How: on a new branch from main after pull request 2 is merged. Change chapter 4, the root README ("How to play")
+    and the code together.
 - [ ] **Notation.** Chapter 4 uses a revised set of symbols: $K$ and $k$ for drawn balls and the red among them, $X$
   and $x$ for marked balls, subscripts $s$, $a$ and $d$ for the shot, attack and defence draws, $N$ for shots, $p_t$
   for the shot probability per round, and $H$ and $A$ for home and away. Rename the symbols in the README,
