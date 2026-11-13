@@ -39,6 +39,11 @@ The subscripts $H$ and $A$ mark the home and away team, for example $m_{u,H}$ an
 team draws into its match urn. The lowercase subscripts $a$ and $d$ mark the attacking and the defending team,
 whichever side each is on.
 
+A running example follows one match through sections 4.2 to 4.5 and ends in section 4.8. The home team has
+$m_{s,H} = 18$ red balls in its skill pool and the away team $m_{s,A} = 12$, and every other symbol has its starting
+value. The example asks for the probability that the home team gets a big chance with $\text{xG} = 0.40$ in the
+first round.
+
 ## 4.2 Before the match: skill pool and match urn
 
 Skill change is the first step of a match, and it is not random. Whoever runs the model may change the number of red
@@ -65,6 +70,10 @@ the next round.
 After the match the h-marked balls are taken out, and every other ball goes back into its skill pool. Each skill pool
 then holds $M_s$ balls, $m_s$ of them red, as before the match.
 
+**Example.** The home team draws $m_{u,H} = 4$ red balls with probability 0.2383, and the away team draws
+$m_{u,A} = 2$ with probability 0.2978. With the h-marked ball, the home team's match urn then holds 5 red balls out
+of 21, and the away team's 2 out of 20. Sections 4.3 to 4.5 follow these two match urns.
+
 ## 4.3 Each round: shot or not
 
 Each of the $n$ rounds starts with one draw from the tempo urn. A red ball means a shot; a white ball ends the round.
@@ -78,6 +87,8 @@ $$
 - Mean: $E[N] = n p_t$
 - Variance: $\mathrm{Var}(N) = n p_t (1 - p_t)$
 - Skewness: $\dfrac{1 - 2p_t}{\sqrt{n p_t (1 - p_t)}}$
+
+**Example.** The first round has a shot with probability $p_t = 1/4 = 0.25$.
 
 ## 4.4 Who shoots
 
@@ -142,6 +153,12 @@ $$
 - Variance: $\mathrm{Var}(S) = q(1 - q) / N$
 - Skewness: $\dfrac{1 - 2q}{\sqrt{N q (1 - q)}}$
 
+**Example.** With 5 red balls out of 21, the home team draws $k_{s,H} = 0, 1, 2, 3$ red balls with probabilities
+0.4211, 0.4511, 0.1203 and 0.0075; with 2 out of 20, the away team draws $k_{s,A} = 0, 1, 2$ with probabilities
+0.7158, 0.2684 and 0.0158. A home big chance needs $k_{s,H} - k_{s,A} \ge 2$, which happens for $(2, 0)$, $(3, 0)$
+and $(3, 1)$ with probabilities 0.0861, 0.0054 and 0.0020. So $\beta_H = 0.0935$. A big chance is never won in the
+tie-break, so the tie-break is not needed here.
+
 ## 4.5 The shot urn
 
 The attacking team draws $K_a$ balls from its match urn and gets $k_a$ red balls. The defending team draws $K_d$
@@ -174,6 +191,11 @@ $P(i, j) = P(k_a = i)\,P(k_d = j)$ and $x$, $X$ the x-marked set for that kind o
 - Mean: $\mu = \sum_{i, j} P(i, j)\,g(i, j)$
 - Variance: $\sigma^2 = \sum_{i, j} P(i, j)\,\big(g(i, j) - \mu\big)^2$
 - Skewness: $\sum_{i, j} P(i, j)\,\big(g(i, j) - \mu\big)^3 / \sigma^3$
+
+**Example.** For a home big chance the shot urn gets $X_b = 20$ x-marked balls, $x_b = 8$ of them red. The xG is
+$10/25 = 0.40$ only when the home team draws $k_a = 2$ red balls and the away team $k_d = 0$, so that nothing is
+cancelled. The home team gets 2 red balls among its $K_a = 5$ with probability 0.2752, and the away team draws a
+white ball with probability $18/20 = 0.9$. So $P(\text{xG} = 0.40) = 0.2752 \times 0.9 = 0.2477$.
 
 ## 4.6 The goal
 
@@ -211,3 +233,22 @@ P(\text{home win}) = \sum_{i > j} P(G_H = i)\,P(G_A = j), \qquad
 P(\text{draw}) = \sum_i P(G_H = i)\,P(G_A = i), \qquad
 P(\text{away win}) = \sum_{i < j} P(G_H = i)\,P(G_A = j)
 $$
+
+## 4.8 The running example
+
+The running example ends with the probability that the home team gets a big chance with $\text{xG} = 0.40$ in the
+first round. Given the two match urns of the example, it is the product of the three steps:
+
+$$
+p_t\,\beta_H\,P(\text{xG} = 0.40) = 0.25 \times 0.0935 \times 0.2477 = 0.00579
+$$
+
+From the skill pools alone, the same product is taken for every pair of match urns and weighted by the probabilities
+of section 4.2:
+
+$$
+P = \sum_{j, k} P(m_{u,H} = j)\,P(m_{u,A} = k)\; p_t\,\beta_H(j, k)\,P_b(\text{xG} = 0.40 \mid j, k) = 0.00544
+$$
+
+Here $\beta_H(j, k)$ and $P_b(\text{xG} = 0.40 \mid j, k)$ are the results of sections 4.4 and 4.5 for match urns
+with $j$ and $k$ red balls drawn.
