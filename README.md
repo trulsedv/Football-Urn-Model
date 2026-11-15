@@ -22,9 +22,9 @@ Then play n rounds. In each round:
 3. **Shot or not** (tempo urn: $M_t$ balls, $m_t$ red): draw one ball from the tempo urn. Red is a shot; white ends
    the round.
 4. **Who shoots:** each team grabs $k_w$ balls from its match urn. The team with more red balls shoots. If equal,
-   each team draws one more ball at a time until one draws red and the other white. If the shooting team had at
-   least $b$ more red balls in its grab, the shot is a big chance; a team that wins in the tie-break never has a
-   big chance. Put all balls back in the match urn.
+   all balls go back and both teams grab $k_w$ balls again, until one team has more red balls. If the shooting team
+   had at least $b$ more red balls in the grab that decided it, the shot is a big chance. Put all balls back in the
+   match urn.
 5. **Shot urn:** the shooting team draws $k_c$ balls and the defending team $k_d$ balls from their match urns. The
    shooting team removes as many red balls as the defender drew (at most all its own red balls) and puts the rest of
    its balls in a shot urn. If a big chance, $M_{xb}$ x-marked balls are also placed in the shot urn, $m_{xb}$ of them red. If not a big chance, $M_{xo}$ x-marked balls are placed in the shot urn, $m_{xo}$ of them red. The shot urn's red share is the shot's xG. The defender puts its ball back in its match urn.

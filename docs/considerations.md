@@ -75,7 +75,7 @@ assumption belongs to the inference, not to the model, and need not equal the ru
 
 ### Who shoots: grab $k_w$ balls, most red wins (phase 4)
 
-Each team grabs $k_w$ balls from its match urn; the team with more red balls shoots, ties broken one ball at a time.
+Each team grabs $k_w$ balls from its match urn; the team with more red balls shoots; on a tie both teams grab again.
 $k_w$ = 1 equals the redraw rule; a larger $k_w$ gives the better team a bigger share of the shots. Chosen over the
 redraw and coin rules because $k_w$ gives a knob for how strongly skill decides the split.
 
@@ -138,8 +138,6 @@ second peak, but within each kind of shot the values are still coarse. Accepted 
 
 ## Open
 
-- **Unbreakable ties in phase 4:** when both match urns hold only one colour (all red or all white), the tie-break
-  can never end. The simulator currently lets a fair draw (one red, one white ball) decide; a proper rule is open.
 - **Form of the xG correction.** Possible parts:
   1. League-wide calibration, e.g. logit P(goal) = a + b·logit(x).
   2. A skill effect: model xG should depend more strongly on skill than Understat's xG does.

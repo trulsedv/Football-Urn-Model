@@ -1,7 +1,6 @@
 """The chapters of docs/design.md: real against simulated data per panel of skill proxy sum and difference."""
 
 from collections import Counter
-from functools import cache
 from math import comb
 from pathlib import Path
 
@@ -171,37 +170,10 @@ def who_shoots_probability(home_urn: tuple[int, int], away_urn: tuple[int, int],
     home_drawn = hypergeometric(home_size, home_red, draws)
     away_drawn = hypergeometric(away_size, away_red, draws)
     win = sum(home_drawn[x] * away_drawn[:x].sum() for x in range(draws + 1))
-    if home_red in {0, home_size} and away_red in {0, away_size}:
-        return win + 0.5 * (home_drawn * away_drawn).sum()  # a tie that can never be broken: a fair draw
-
-    @cache
-    def tie_break(home: tuple[int, int], away: tuple[int, int]) -> tuple[float, float]:
-        """Follow the tie-break from these urns until a team wins or an urn runs empty.
-
-        Returns:
-            (a, b): the home team wins with probability a + b * (its win probability after all balls go back).
-
-        """
-        (red, size), (other_red, other_size) = home, away
-        if size == 0 or other_size == 0:  # an urn ran empty, so all balls go back
-            return 0.0, 1.0
-        home_is_red, away_is_red = red / size, other_red / other_size
-        result = np.array([home_is_red * (1 - away_is_red), 0.0])
-        if red and other_red:  # both red: draw again
-            both_red = tie_break((red - 1, size - 1), (other_red - 1, other_size - 1))
-            result += home_is_red * away_is_red * np.array(both_red)
-        if size - red and other_size - other_red:  # both white: draw again
-            both_white = tie_break((red, size - 1), (other_red, other_size - 1))
-            result += (1 - home_is_red) * (1 - away_is_red) * np.array(both_white)
-        return float(result[0]), float(result[1])
-
-    full_win, full_restart = tie_break(home_urn, away_urn)
-    after_put_back = full_win / (1 - full_restart)
-    tie = 0.0
-    for x in range(draws + 1):
-        start_win, start_restart = tie_break((home_red - x, home_size - draws), (away_red - x, away_size - draws))
-        tie += home_drawn[x] * away_drawn[x] * (start_win + start_restart * after_put_back)
-    return win + tie
+    tie = (home_drawn * away_drawn).sum()
+    if (home_red, away_red) in {(0, 0), (home_size, away_size)}:
+        return 0.5  # every grab is a tie; the value is arbitrary, since these match urns have negligible weight
+    return win / (1 - tie)  # a tie is redrawn, so only the grabs that are not ties count
 
 
 def hypergeometric(size: int, red: int, draws: int) -> np.ndarray:

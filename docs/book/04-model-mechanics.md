@@ -95,13 +95,17 @@ $$
 When there is a shot, each team draws $K_s$ balls from its match urn without replacement. The team that draws more
 red balls attacks and shoots; the other team defends.
 
-A tie is broken one ball at a time. If both teams draw the same number of red balls, each team draws one more ball
-from what is left in its match urn, and this is repeated until one team draws red and the other white. That team
-attacks. If a match urn runs out of balls, all drawn balls go back and the tie-break continues.
+A tie is redrawn. If both teams draw the same number of red balls, all drawn balls go back into the match urns and
+both teams draw $K_s$ balls again, and this is repeated until one team draws more red balls than the other. That team
+attacks.
 
-The shot is a big chance if the attacking team drew at least $b$ more red balls than the defending team; otherwise
-it is an ordinary chance. A shot won in the tie-break is always an ordinary chance. All drawn balls then go back into
-the match urns.
+The model takes the redraw to end. A tie repeats for ever only if both match urns hold balls of a single colour, the
+same in both. Only white cannot happen, because the home team's h-marked balls are red. Only red needs each team to
+draw only red balls from its skill pool; for any skill pool with far fewer red balls than the match urn holds, this
+is so unlikely that the model ignores it.
+
+The shot is a big chance if the attacking team drew at least $b$ more red balls than the defending team in the draw
+that decided who attacks; otherwise it is an ordinary chance. All drawn balls then go back into the match urns.
 
 The two draws are hypergeometric in the two match urns. With $k_{s,H}$ and $k_{s,A}$ the red balls the home and
 away team draw:
@@ -111,31 +115,18 @@ P(k_{s,H} = i) = \frac{\binom{m_{u,H} + x_H}{i}\binom{M_u - m_{u,H}}{K_s - i}}{\
 P(k_{s,A} = j) = \frac{\binom{m_{u,A}}{j}\binom{M_u - m_{u,A}}{K_s - j}}{\binom{M_u}{K_s}}
 $$
 
-The tie-break is a recursion on the balls left in the two match urns. With $r_H$ red balls among $\ell_H$ left in the
-home team's match urn and $r_A$ among $\ell_A$ in the away team's, the probability $t$ that the home team wins the
-tie-break is
+Only a draw that is not a tie decides the shot. Every redraw is from the full match urns, so each draw has the same
+probabilities, and the outcome is that of a single draw given that it is not a tie. With the probability of a tie
+$P_\text{tie} = \sum_i P(k_{s,H} = i)\,P(k_{s,A} = i)$, the probability $q$ that the home team attacks, and the
+probabilities $\beta_H$ and $\beta_A$ that the shot is a home or an away big chance, are
 
 $$
-t(r_H, \ell_H, r_A, \ell_A) = \frac{r_H}{\ell_H}\Big(1 - \frac{r_A}{\ell_A}\Big)
-+ \frac{r_H}{\ell_H}\,\frac{r_A}{\ell_A}\; t(r_H - 1, \ell_H - 1, r_A - 1, \ell_A - 1)
-+ \Big(1 - \frac{r_H}{\ell_H}\Big)\Big(1 - \frac{r_A}{\ell_A}\Big)\; t(r_H, \ell_H - 1, r_A, \ell_A - 1)
-$$
-
-When $\ell_H$ or $\ell_A$ reaches zero, all balls go back, and $t$ takes its value from the full match urns,
-$t^* = t(m_{u,H} + x_H,\ M_u + x_H,\ m_{u,A},\ M_u)$. Every path then ends either in a winner or in $t^*$, so $t^*$
-is the solution of one linear equation. A tie at $i$ red balls each starts the tie-break from
-$t_i = t(m_{u,H} + x_H - i,\ M_u + x_H - K_s,\ m_{u,A} - i,\ M_u - K_s)$.
-
-The probability $q$ that the home team attacks, and the probabilities $\beta_H$ and $\beta_A$ that the shot is a home
-or an away big chance, are then
-
-$$
-q = \sum_{i > j} P(k_{s,H} = i)\,P(k_{s,A} = j) + \sum_i P(k_{s,H} = i)\,P(k_{s,A} = i)\,t_i
+q = \frac{1}{1 - P_\text{tie}} \sum_{i > j} P(k_{s,H} = i)\,P(k_{s,A} = j)
 $$
 
 $$
-\beta_H = \sum_{i - j \ge b} P(k_{s,H} = i)\,P(k_{s,A} = j), \qquad
-\beta_A = \sum_{j - i \ge b} P(k_{s,H} = i)\,P(k_{s,A} = j)
+\beta_H = \frac{1}{1 - P_\text{tie}} \sum_{i - j \ge b} P(k_{s,H} = i)\,P(k_{s,A} = j), \qquad
+\beta_A = \frac{1}{1 - P_\text{tie}} \sum_{j - i \ge b} P(k_{s,H} = i)\,P(k_{s,A} = j)
 $$
 
 Each shot is therefore, independently of the others, a home ordinary chance with probability $q - \beta_H$, a home
@@ -156,12 +147,12 @@ $$
 **Example.** With 5 red balls out of 21, the home team draws $k_{s,H} = 0, 1, 2, 3$ red balls with probabilities
 0.4211, 0.4511, 0.1203 and 0.0075; with 2 out of 20, the away team draws $k_{s,A} = 0, 1, 2$ with probabilities
 0.7158, 0.2684 and 0.0158. A home big chance needs $k_{s,H} - k_{s,A} \ge 2$, which happens for $(2, 0)$, $(3, 0)$
-and $(3, 1)$ with probabilities 0.0861, 0.0054 and 0.0020. So $\beta_H = 0.0935$. A big chance is never won in the
-tie-break, so $\beta_H$ does not need it.
+and $(3, 1)$ with probabilities 0.0861, 0.0054 and 0.0020, 0.0935 in all.
 
-The tie-break decides who shoots in a large share of the shots. The two teams draw the same number of red balls with
-probability 0.4244, and the home team draws more with probability 0.4488. With the tie-break, the home team attacks
-with probability $q = 0.7799$.
+A tie is redrawn in a large share of the draws. The two teams draw the same number of red balls with probability
+$P_\text{tie} = 0.4244$, and the home team draws more with probability 0.4488. Dividing by the probability
+$1 - 0.4244 = 0.5756$ that a draw is not a tie, the home team attacks with probability $q = 0.4488 / 0.5756 = 0.7797$,
+and the shot is a home big chance with probability $\beta_H = 0.0935 / 0.5756 = 0.1625$.
 
 ## 4.5 The shot urn
 
@@ -245,14 +236,14 @@ The running example ends with the probability that the home team gets a big chan
 first round. Given the two match urns of the example, it is the product of the three steps:
 
 $$
-p_t\,\beta_H\,P(\text{xG} = 0.40) = 0.25 \times 0.0935 \times 0.2477 = 0.00579
+p_t\,\beta_H\,P(\text{xG} = 0.40) = 0.25 \times 0.1625 \times 0.2477 = 0.01006
 $$
 
 From the skill pools alone, the same product is taken for every pair of match urns and weighted by the probabilities
 of section 4.2:
 
 $$
-P = \sum_{j, k} P(m_{u,H} = j)\,P(m_{u,A} = k)\; p_t\,\beta_H(j, k)\,P_b(\text{xG} = 0.40 \mid j, k) = 0.00544
+P = \sum_{j, k} P(m_{u,H} = j)\,P(m_{u,A} = k)\; p_t\,\beta_H(j, k)\,P_b(\text{xG} = 0.40 \mid j, k) = 0.00881
 $$
 
 Here $\beta_H(j, k)$ and $P_b(\text{xG} = 0.40 \mid j, k)$ are the results of sections 4.4 and 4.5 for match urns

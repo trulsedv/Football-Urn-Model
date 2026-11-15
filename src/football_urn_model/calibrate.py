@@ -68,7 +68,7 @@ def fitting_plan() -> list[tuple[str, list[int], str]]:
 
     """
     return [
-        ("home_extra_red", [0, 1, 2, 3, 4], "home shots per match"),
+        ("home_extra_red", [1, 2, 3, 4], "home shots per match"),  # 0 can leave both match urns all white
         ("match_urn_size", [8, 10, 15, 20, 30, 50], "sd of home shot share per match"),
         ("marked_white", [5, 10, 15, 20, 25, 30, 40], "goals per match"),
     ]

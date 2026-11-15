@@ -98,14 +98,8 @@ def record(step: tuple) -> None:
         )
     elif name == "grab":
         is_home, draws, red = values
-        row["grab"][is_home] = balls(red, draws)
-    elif name == "tie-break":
-        home_is_red, away_is_red, is_put_back = values
-        # ↺: an urn ran empty, so all balls went back first.
-        row["grab"][True] += f"{' ↺' if is_put_back else ''} {balls(home_is_red, 1)}"
-        row["grab"][False] += f"{' ↺' if is_put_back else ''} {balls(away_is_red, 1)}"
-    elif name == "fair draw":
-        row["grab"][values[0]] += " (fair draw)"
+        # ↺: the grab before was a tie, so all balls went back and both teams grab again.
+        row["grab"][is_home] += f"{' ↺ ' if row['grab'][is_home] else ''}{balls(red, draws)}"
     elif name == "chance balls":
         is_home, draws, red, is_big_chance = values
         row["chance"][is_home] = balls(red, draws)
