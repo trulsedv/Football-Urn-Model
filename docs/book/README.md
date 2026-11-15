@@ -54,6 +54,10 @@ item below is to be decided or done as the chapters are written.
   equations are needed in every chapter that uses them, or whether combining numerically (a weighted sum over the
   outcomes of earlier steps) is enough everywhere. If numerically is enough, reword the chapter 6 item below and drop
   its list of closed forms.
+- [ ] **Rerun `uv run calibrate` after the redraw rule.** The redraw raises the big-chance share (about 1.7 times
+  in the running example of chapter 4), which moves xG and goals per match, and `calibrate` fits `marked_white`
+  against goals per match. `uv run chapters` can wait: the figures it gives `docs/design.md` (total shots, home share
+  of shots) barely move, so rerun it when the xG and goal chapters are filled in.
 - [ ] **Notation.** Chapter 4 uses a revised set of symbols: $K$ and $k$ for drawn balls and the red among them, $X$
   and $x$ for marked balls, subscripts $s$, $a$ and $d$ for the shot, attack and defence draws, $N$ for shots, $p_t$
   for the shot probability per round, and $H$ and $A$ for home and away. Rename the symbols in the README,
