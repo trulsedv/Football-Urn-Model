@@ -37,7 +37,7 @@ def model_settings() -> dict[str, int]:
         "red_min": 10,  # red balls in the skill pool of the weakest team
         "red_max": 25,  # ... and of the strongest team
         "match_urn_size": 20,  # M_u
-        "home_extra_red": 1,  # m_h
+        "home_extra_red": 1,  # m_h; at least 1, so that both match urns can never be all white (who_shoots)
         "rounds": 100,  # n
         "tempo_urn_size": 4,  # M_t
         "tempo_urn_red": 1,  # m_t; average shots per match = rounds * tempo_urn_red / tempo_urn_size

@@ -172,7 +172,7 @@ def who_shoots_probability(home_urn: tuple[int, int], away_urn: tuple[int, int],
     win = sum(home_drawn[x] * away_drawn[:x].sum() for x in range(draws + 1))
     tie = (home_drawn * away_drawn).sum()
     if (home_red, away_red) in {(0, 0), (home_size, away_size)}:
-        return 0.5  # every grab is a tie; the model ignores these match urns, and any value does for their weight
+        return 0.5  # every grab is a tie; the value is arbitrary, since these match urns have negligible weight
     return win / (1 - tie)  # a tie is redrawn, so only the grabs that are not ties count
 
 
