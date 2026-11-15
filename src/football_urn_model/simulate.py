@@ -156,43 +156,30 @@ def who_shoots(
     draws: int,
     rng: np.random.Generator,
 ) -> Generator[tuple, None, tuple[bool, int]]:
-    """Phase 4: both teams grab `draws` balls; more red balls shoots, ties are broken one ball at a time.
+    """Phase 4: both teams grab `draws` balls; more red balls shoots. On a tie all balls go back and both grab again.
 
     Yields:
-        Each draw: the grabs, then one tuple per tie-break draw.
+        Each grab, a tie's new grabs included.
 
     Returns:
-        Whether the home team shoots, and the winning margin in red balls (0 when won in a tie-break).
+        Whether the home team shoots, and the winning margin in red balls.
+
+    Raises:
+        ValueError: If every grab is a tie, so that the redraw would never end.
 
     """
     (home_red, home_size), (away_red, away_size) = home_urn, away_urn
-    home_drawn = int(rng.hypergeometric(home_red, home_size - home_red, draws))
-    yield ("grab", True, draws, home_drawn)
-    away_drawn = int(rng.hypergeometric(away_red, away_size - away_red, draws))
-    yield ("grab", False, draws, away_drawn)
-    if home_drawn != away_drawn:
-        return home_drawn > away_drawn, abs(home_drawn - away_drawn)
-
-    if home_red in {0, home_size} and away_red in {0, away_size}:
-        # Both urns hold one colour only, so the tie can never be broken: a fair draw decides (an open question).
-        is_home = bool(rng.integers(2) == 0)
-        yield ("fair draw", is_home)
-        return is_home, 0
-
-    # Tie: draw one ball each from what is left until the colours differ; if a urn runs empty, put all balls back.
-    home_left = [home_red - home_drawn, home_size - draws]
-    away_left = [away_red - away_drawn, away_size - draws]
+    if draws == 0 or (home_red, away_red) in {(0, 0), (home_size, away_size)}:
+        message = "Who shoots can never be decided: both match urns hold only red balls, or only white balls."
+        raise ValueError(message)
     while True:
-        is_put_back = home_left[1] == 0 or away_left[1] == 0
-        if is_put_back:
-            home_left, away_left = [home_red, home_size], [away_red, away_size]
-        home_is_red = bool(rng.integers(home_left[1]) < home_left[0])
-        away_is_red = bool(rng.integers(away_left[1]) < away_left[0])
-        yield ("tie-break", home_is_red, away_is_red, is_put_back)
-        if home_is_red != away_is_red:
-            return home_is_red, 0  # ruff: ignore[return-in-generator] - read by play_match with yield from
-        home_left = [home_left[0] - home_is_red, home_left[1] - 1]
-        away_left = [away_left[0] - away_is_red, away_left[1] - 1]
+        home_drawn = int(rng.hypergeometric(home_red, home_size - home_red, draws))
+        yield ("grab", True, draws, home_drawn)
+        away_drawn = int(rng.hypergeometric(away_red, away_size - away_red, draws))
+        yield ("grab", False, draws, away_drawn)
+        if home_drawn != away_drawn:
+            # ruff: ignore[return-in-generator] - read by play_match with yield from
+            return home_drawn > away_drawn, abs(home_drawn - away_drawn)
 
 
 def build_shot_urn(

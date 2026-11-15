@@ -112,12 +112,12 @@ Observables: home share of shots per match.
 ### Model
 
 [README step 4](../README.md#how-to-play): both teams grab $k_w$ balls from their match urns; the one with the
-most red balls gets the shot. If they have equal red balls, they draw one more ball each until one gets red and the
-other white. Parameters: $k_w$, and through the match urns $m_s$, $M_s$, $M_u$, $m_h$.
+most red balls gets the shot. If they have equal red balls, all balls go back and both teams grab again, until one
+has more red balls. Parameters: $k_w$, and through the match urns $m_s$, $M_s$, $M_u$, $m_h$.
 
 ### Equations
 
-Given the match urns, each shot is the home team's with the same probability $q$: the probability of grabbing more red balls, plus the probability of a tie times the probability of winning the tie-break. $q$ is computed exactly from the two match urns, including putting all balls back when an urn runs empty. The number of shots $T$ comes from the tempo urn (phase 3), independently of $q$, so the home shots are binomial($T$, $q$) and the home share is $S$ = home shots / $T$:
+Given the match urns, each shot is the home team's with the same probability $q$: the probability of grabbing more red balls, divided by the probability that the grab is not a tie, since a tie is grabbed again. $q$ is computed exactly from the two match urns. The number of shots $T$ comes from the tempo urn (phase 3), independently of $q$, so the home shots are binomial($T$, $q$) and the home share is $S$ = home shots / $T$:
 
 - Mean: $E[S \mid q] = q$
 - Variance: $\text{Var}(S \mid q) = q(1-q)\,E[1/T]$
