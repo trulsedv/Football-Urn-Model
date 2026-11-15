@@ -42,12 +42,13 @@ item below is to be decided or done as the chapters are written.
 - [ ] **`docs/data-analysis.md`.** The data and figures behind chapter 5. Decide whether chapter 5 cites it or
   absorbs it.
 - [ ] **Outline, discussion notes and minutes** (`docs/report-outline.md`, `docs/discussion-notes-2026-11-12.md`,
-  `docs/meeting-minutes-2026-11-12.md`, in pull request 1). These are working material for the book. Decide whether
+  `docs/meeting-minutes-2026-11-12.md`, in `docs/`). These are working material for the book. Decide whether
   they stay in `docs/` as a record once the chapters exist, or move to an archive folder.
-- [ ] **Update the outline** (`docs/report-outline.md`, pull request 1). Chapter 4 now only describes how the game
+- [ ] **Update the outline** (`docs/report-outline.md`). Chapter 4 now only describes how the game
   is played and how the mean, variance and skewness of each step follow from the step before. Resolution against
   variance is in chapter 5, and the independence of rounds in chapter 3. Change the descriptions of chapters 3, 4 and
-  5 to match.
+  5 to match. The outline also says "neutral urn" where the book and the rest of the documentation say "tempo urn";
+  rename it in the outline.
 - [ ] **Decide how the combined equations are handled.** Chapter 4 gives each step given the outcome of the step
   before, and combines them only once, numerically, in the running example (section 4.8). Open: whether the combined
   equations are needed in every chapter that uses them, or whether combining numerically (a weighted sum over the
