@@ -42,8 +42,8 @@ $$
 $$
 
 Summed over every value $v$, the two add up to $q + (1 - q) = 1$. A value that only one kind of shot can produce gets
-its probability from that kind alone. With the starting values, ordinary chances lie between 0.04 and 0.23 and big
-chances between 0.32 and 0.52, so an observed xG also tells which kind of shot it was.
+its probability from that kind alone. If the parameters keep the values of the two kinds apart, as the starting
+values do, an observed xG also tells which kind of shot it was; if not, both kinds add to the same value.
 
 ## 5.3 One match, given the match urns
 
@@ -100,24 +100,46 @@ the likelihood for every pair of skill pools. The products of many small factors
 logarithms, scaled before the matrix product so that the largest entry of $\Lambda$ is one; the scale cancels when
 the posterior is normalised.
 
+The size of the skill pool costs little. The table is indexed by the match urns, so a larger skill pool, with many
+more possible counts of red balls, only adds rows to $W$. Real teams need many more skill levels than the starting
+values give: 10 to 25 red balls out of 100 is about 16 levels. A larger skill pool also changes match-day form
+(section 4.2), so its size is fitted with the other parameters in chapter 7. Larger match urns, for a finer xG, cost
+more, since the number of cells grows with the square of $M_u + 1$.
+
 The table depends on the parameters of chapter 4 and not on the teams. It is recomputed whenever the parameters
 change, as they do during the fitting of chapters 6 and 7.
 
 ## 5.6 Observed xG and model xG
 
 An observed xG has to be matched to the values the urns can produce before it can be looked up. Real xG is a
-continuous number, often given to two decimals, and the urns produce a finite set of values: with the starting
-values, 11 for ordinary chances and 11 for big chances. A shot with an observed xG of 0.137 has no value of its own
-in the table.
+continuous number, often given to two decimals, and the urns produce a finite set of values, so an observed xG of,
+say, 0.137 usually has no value of its own in the table.
 
-Two rules are the natural candidates. The observed value can count as the nearest value the urns can produce, or
-it can be split between the two neighbouring values, with weights that fall linearly with the distance, so that the
-shot's factor in a cell is the weighted sum of the two lookups. The rule matters most for values outside the range
-the urns cover, and for values in the gap between the two kinds of shot, from 0.23 to 0.32 with the starting values.
+The values the urns can produce depend only on the parameters. They are set by the ball counts of section 4.5: the
+balls drawn and the x-marked balls of each kind of shot. The match urns only change how likely each value is, and a
+value that a weak match urn cannot reach has probability zero in that cell. So the values form one sorted list,
+$u_1 < u_2 < \dots < u_V$, the same for both teams, every match and every cell of the table. Ordinary and big chances
+share the list, since real data does not say which kind a shot was, and $\ell_H$ and $\ell_A$ already add the two
+kinds.
 
-Which rule the model uses is not decided yet. Setting up the urns so that they can produce every two-decimal value
-within the range would make the rule matter less, but not remove it, since real xG still falls outside the range or
-in the gap.
+An observed xG is split between its two neighbours in the list. With $u_r \le v \le u_{r+1}$, the shot counts as
+$u_r$ with weight $w$ and as $u_{r+1}$ with weight $1 - w$, where
+
+$$
+w = \frac{u_{r+1} - v}{u_{r+1} - u_r}
+$$
+
+and its factor in a cell is the weighted sum of the two lookups, $w\,\ell_H(u_r \mid j, k) + (1 - w)\,\ell_H(u_{r+1}
+\mid j, k)$ for a home shot, and the same with $\ell_A$ for an away shot. An observed xG below $u_1$ counts as $u_1$,
+and one above $u_V$ as $u_V$. The neighbours and weights of each shot are found once and used in every cell.
+
+The split keeps each shot's xG right on average, since $w\,u_r + (1 - w)\,u_{r+1} = v$. Counting a shot as its
+nearest value would throw away where it lies between the two. The split still widens the spread of xG a little, by
+spreading each shot over two values.
+
+The larger distortion is at the ends of the list. A real xG far above the top of the list, counted as the top value,
+loses much of its size. The fit of chapter 7 should therefore make the list cover nearly all real xG. Setting up the urns so
+that they produce every two-decimal value within the range makes the split matter less, but the ends remain.
 
 ## 5.7 The update after a match
 
@@ -143,7 +165,7 @@ $$
 Keeping only each team's own distribution drops the link between the two teams. After the match, a strong home team
 against a strong away team can explain the same shots as a weaker home team against a weaker away team, so the joint
 distribution has the two teams' skills correlated. Keeping the joint distribution of every team in a league is not
-possible on a grid, since twenty teams of 101 values each give $101^{20}$ combinations. The approximation is that
+possible on a grid, since twenty teams of $M_s + 1$ values each give $(M_s + 1)^{20}$ combinations. The approximation is that
 the correlation fades as each team meets other opponents.
 
 ## 5.8 Between matches: skill drift
@@ -157,37 +179,25 @@ $$
 \pi(s) = \sum_{s'} K(s \mid s')\, \pi'(s')
 $$
 
-A simple drift moves the red balls one up or one down, each with probability $\delta$, and leaves them as they are
-otherwise; at 0 and at $M_s$ the move out of the range is not made. With $\delta = 0$ the distribution narrows with
-every match and in the end becomes as certain as one likes. With $\delta > 0$ it stops narrowing at a width where
-the widening between matches balances what each match reveals.
+The drift is a spread around the current count, since red balls may change by more than one between matches. The
+model uses a rounded normal with standard deviation $\sigma M_s$, kept inside the skill pool and normalised there:
+
+$$
+K(s \mid s') = \frac{\exp\!\big(-(s - s')^2 / 2 (\sigma M_s)^2\big)}{\sum_{r=0}^{M_s} \exp\!\big(-(r - s')^2 / 2 (\sigma M_s)^2\big)},
+\qquad s = 0, \dots, M_s
+$$
+
+The spread $\sigma$ is a share of the skill pool, so it keeps its meaning when $M_s$ changes. With $\sigma = 0$
+the distribution narrows with every match and in the end becomes as certain as one likes. With $\sigma > 0$ it
+stops narrowing at a width where the widening between matches balances what each match reveals.
 
 The drift is an assumption of the inference, not a part of the model, and it does not have to equal the change used
 when matches are simulated. Too little drift makes the inference slow to follow a real change in skill and too sure
-of an old estimate; too much makes it more uncertain than it needs to be. Choosing it is the main setting of the
-inference, and section 5.10 sets it.
+of an old estimate; too much makes it more uncertain than it needs to be. Choosing $\sigma$ is the main setting of
+the inference. Chapter 7 sets it, by a check on simulated matches run with the fitted parameters.
 
 ## 5.9 Before the first match
 
 Before a team's first match, its distribution is a starting choice and not a result of the inference. It can be
 spread evenly over a range of red balls, or carried over from an earlier season. Its influence fades with each match
 the team plays, at a rate set by the drift of section 5.8.
-
-## 5.10 Checking the inference on simulated matches
-
-The inference is checked on simulated matches, since only there is the true skill known. About twenty teams play
-thousands of matches by the rules of chapter 4. Each team's skill pool changes slowly along its own curve, for
-example a sine wave with its own period, amplitude and phase. The inference is run on the simulated shots alone,
-match by match, and its distributions are compared with the true red balls.
-
-Three things are measured. The first is whether the centre of each team's distribution follows its true red balls.
-The second is whether the distributions are as certain as they should be: the true red balls should lie inside an
-80% interval in about 80% of the matches. The third is how many matches a team needs before its distribution stops
-narrowing, which says how early in a season the estimates can be used.
-
-The check sets the drift of section 5.8. The value of $\delta$ that gives the right coverage, while still following
-the changes in skill, is the one the inference uses.
-
-The check cannot show whether the model describes real football. The simulated matches come from the same model the
-inference assumes, so a good result shows that the inference recovers skill when the model is right, and nothing
-more. How well the model fits real matches is the subject of chapters 6 and 7.

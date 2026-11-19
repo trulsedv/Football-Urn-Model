@@ -22,9 +22,10 @@ following it or pointing to it.
 
 The order after chapter 4 was changed in [issue #4](https://github.com/trulsedv/football-urn-model/issues/4).
 Simulated matches cannot fit the model to real football, so the parameters are fitted to real data, and that has to
-come after the inference, since skill is not observed. Chapter 5 is the inference and ends with the check on
-simulated matches. Chapter 6 is the method of the fit: the error function and how to minimise it. Chapter 7 applies
-it to real data, starting from a rough fit of the mean, variance and skewness of each step.
+come after the inference, since skill is not observed. Chapter 5 is the inference. Chapter 6 is the method of the fit:
+the error function and how to minimise it. Chapter 7 applies it to real data, starting from a rough fit of the mean,
+variance and skewness of each step, and ends with the check of the inference on simulated matches, run with the
+fitted parameters (moved there from chapter 5 in pull request #5, for now).
 
 ## To do: revise the documentation around the book
 
@@ -68,10 +69,11 @@ item below is to be decided or done as the chapters are written.
 
 ## To do: open points from chapter 5 onwards
 
-- [ ] **Rule for observed xG** (section 5.6). Decide between the nearest value and splitting between the two
-  neighbours, and how values outside the range and in the gap between the two kinds of shot are handled.
-- [ ] **Results of the simulated check** (section 5.10). Needs inference code: the lookup table, the update and the
-  drift. Add the results, and the value of $\delta$ it sets, to the section once the code exists.
+- [x] **Rule for observed xG** (section 5.6). Decided: split between the two neighbouring values, weighted by
+  distance; values outside the range count as the nearest end value.
+- [ ] **The simulated check** (chapter 7). Needs inference code: the lookup table, the update and the drift. It
+  sets the drift spread $\sigma$ of section 5.8. Its loop: the fit runs through the inference, which needs a drift,
+  so chapter 7 starts from a guessed $\sigma$ and refines it after the fit.
 - [ ] **What the error function measures** (chapter 6). For example the result probabilities or the xG of the next
   match, scored against what happened.
 - [ ] **Where resolution against variance goes.** It was planned for the old chapter 5, "Fitting the structure",
@@ -125,6 +127,15 @@ under chapter 7, and those for "Inference" under chapter 5.
       $K_s = 3$ and 0.77 with $K_s = 10$.
     - The xG resolution: with the starting values, each kind of shot can take 11 values, from 0.04 to 0.23 for an
       ordinary chance and from 0.32 to 0.52 for a big chance.
+  - The size of the skill pool. The starting values give about 16 skill levels, too few for real teams; a larger
+    pool only grows $W$ (section 5.5) but changes match-day form, so it is fitted with the rest.
+  - The check of the inference on simulated matches, moved from section 5.10 for now. About twenty teams play
+    thousands of matches by chapter 4's rules, each team's skill pool changing slowly along its own curve (for
+    example a sine wave with its own period, amplitude and phase). The inference is run on the simulated shots alone.
+    Measured: whether the centre of each distribution follows the true red balls; whether an 80% interval holds the
+    truth in about 80% of matches; and how many matches a team needs before its distribution stops narrowing. It
+    sets $\sigma$, and cannot show whether the model describes real football. The text as it was is in commit
+    `3c787bf`.
   - The model's moments over the match urns, to compare with real matches. The stacked closed forms drafted
     earlier are in commit `a508f78`:
     - the home share of shots over the match urns, with $E[1/N]$ and the variance of $q$;
@@ -133,8 +144,7 @@ under chapter 7, and those for "Inference" under chapter 5.
     - the result as a multinomial over the rounds, given the match urns.
 - [x] **Chapter 5, Inference.**
   - The likelihood of a whole match from the two skill pools, and the lookup table: sections 5.2 to 5.5.
-  - The rule for assigning a continuous observed xG to one of the values the urns can produce: section 5.6
-    describes it, the choice is open above.
+  - The rule for assigning a continuous observed xG to one of the values the urns can produce: section 5.6.
 - [ ] **Chapter 8, Use.**
   - The probability of a result from the two skill pools. It sums over every path through the chain; the stacked
     result above gives it given the match urns.

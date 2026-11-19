@@ -24,7 +24,7 @@ This chapter specifies the urn chain exactly. A team's skill pool is drawn into 
 
 ## 5. Inference
 
-This chapter presents the skill update as a forward-only Bayesian calculation. For every candidate pair of skill pools, the model gives the probability of the observed match, shot by shot: which team shot and with what xG. Multiplied by the prior and normalised, this yields the posterior. Because the shots are independent given the match urns, the likelihood is a sum over match urns of products over shots, computed exactly from a lookup table indexed by the two match urns. The chapter also covers matching observed xG to the values the urns can produce, the skill drift between matches, and the starting prior. It ends with a short check on simulated matches, where twenty teams' red balls drift along slow curves: the inference should recover the known counts, with honest intervals. The check sets the assumed drift, and says nothing about whether the mechanics match real football.
+This chapter presents the skill update as a forward-only Bayesian calculation. For every candidate pair of skill pools, the model gives the probability of the observed match, shot by shot: which team shot and with what xG. Multiplied by the prior and normalised, this yields the posterior. Because the shots are independent given the match urns, the likelihood is a sum over match urns of products over shots, computed exactly from a lookup table indexed by the two match urns. The chapter also covers matching observed xG to the values the urns can produce, by splitting each shot between its two neighbouring values, the skill drift between matches as a spread around the current count, and the starting prior.
 
 ## 6. Fitting method
 
@@ -32,7 +32,7 @@ This chapter sets out how the model's parameters are fitted to real data: the er
 
 ## 7. Fitting to real data
 
-This chapter applies the method of chapter 6 to real matches. It opens with a rough fit that matches the mean, variance and skewness of each step to three Premier League seasons, with final points as the skill proxy, as the starting point. The flat relationship between shot count and skill, which motivates the tempo urn, is shown here. The fit against the error function follows, with its results and the places where the structure of chapter 4 cannot match the data, such as the variance of the shot count.
+This chapter applies the method of chapter 6 to real matches. It opens with a rough fit that matches the mean, variance and skewness of each step to three Premier League seasons, with final points as the skill proxy, as the starting point. The flat relationship between shot count and skill, which motivates the tempo urn, is shown here. The fit against the error function follows, with its results and the places where the structure of chapter 4 cannot match the data, such as the variance of the shot count. It ends with a check of the inference on simulated matches, run with the fitted parameters, where twenty teams' red balls drift along slow curves: the inference should recover the known counts, with honest intervals. The check sets the assumed drift, and says nothing about whether the mechanics match real football.
 
 ## 8. Use
 
