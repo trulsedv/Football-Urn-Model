@@ -109,7 +109,7 @@ nearest value would throw away where it lies between the two. The split still wi
 spreading each shot over two values.
 
 The larger distortion is at the ends of the list. A real xG far above the top of the list, counted as the top value,
-loses much of its size, and so does a real xG far below the bottom. The fit of chapter 7 should therefore make the
+loses much of its size, and so does a real xG far below the bottom. The fit of chapter 8 should therefore make the
 list cover nearly all real xG. Setting up the urns so that they produce every two-decimal value within the range
 makes the split matter less, but the ends remain.
 
@@ -173,7 +173,7 @@ stops narrowing at a width where the widening between matches balances what each
 The drift is an assumption of the inference, not a part of the model, and it does not have to equal the change used
 when matches are simulated. Too little drift makes the inference slow to follow a real change in skill and too sure
 of an old estimate; too much makes it more uncertain than it needs to be. Choosing $\sigma$ is the main setting of
-the inference. It is fitted together with the parameters of chapter 4, by the error function of chapter 6. The check
+the inference. It is fitted together with the parameters of chapter 4, by the error function of chapter 7. The check
 on simulated matches in appendix B verifies the fitted $\sigma$ and tests the assumption of independent skills.
 
 ## 5.8 Before the first match
