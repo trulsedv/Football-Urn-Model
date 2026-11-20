@@ -10,8 +10,8 @@ mark the home and away team, and $a$ and $d$ the attacking and defending team.
 
 ## Model (chapter 4)
 
-| Symbol | Meaning | Defined in |
-| --- | --- | --- |
+| Symbol | Meaning | Section |
+| ---------- | ------------------------------------ | ------ |
 | $M_s$, $m_s$ | Balls and red balls in a skill pool; $m_s$ is the team's skill | 4.1 |
 | $p_s$ | Red share of a skill pool, $m_s / M_s$ | 4.2 |
 | $M_u$, $m_u$ | Balls drawn from the skill pool into a match urn, and red balls among them | 4.1, 4.2 |
@@ -42,8 +42,8 @@ mark the home and away team, and $a$ and $d$ the attacking and defending team.
 
 ## Inference (chapter 5)
 
-| Symbol | Meaning | Defined in |
-| --- | --- | --- |
+| Symbol | Meaning | Section |
+| ---------- | ------------------------------------ | ------ |
 | $D$ | The observed match, its list of shots | 5.1 |
 | $t_i$, $v_i$ | Team and xG of shot $i$ | 5.1 |
 | $j$, $k$ | Red balls in the home and the away team's match urn | 5.2 |
@@ -62,8 +62,8 @@ mark the home and away team, and $a$ and $d$ the attacking and defending team.
 
 ## Prediction (chapter 6)
 
-| Symbol | Meaning | Defined in |
-| --- | --- | --- |
+| Symbol | Meaning | Section |
+| ---------- | ------------------------------------ | ------ |
 | $\omega_H(j)$, $\omega_A(k)$ | Probability of a match urn before the match | 6.1 |
 | $\omega(j, k)$ | Probability of a pair of match urns, with the all-red pair left out | 6.1 |
 | $P_H(v)$, $P_A(v)$ | Predicted xG distribution of one home or away shot | 6.3 |
@@ -72,8 +72,8 @@ mark the home and away team, and $a$ and $d$ the attacking and defending team.
 
 ## Fitting method (chapter 7)
 
-| Symbol | Meaning | Defined in |
-| --- | --- | --- |
+| Symbol | Meaning | Section |
+| ---------- | ------------------------------------ | ------ |
 | $B$ | Number of bins | 7.4 |
 | $P_b$, $F_b$ | Predicted probability of bin $b$, and of bin $b$ or lower | 7.4 |
 | $O_b$ | 1 if the observation is in bin $b$ or lower, else 0 | 7.4 |
@@ -85,8 +85,8 @@ mark the home and away team, and $a$ and $d$ the attacking and defending team.
 
 ## Computation (appendix A)
 
-| Symbol | Meaning | Defined in |
-| --- | --- | --- |
+| Symbol | Meaning | Section |
+| ---------- | ------------------------------------ | ------ |
 | $W$ | Hypergeometric probabilities, $W_{sj} = P(m_u = j \mid m_s = s)$ | A.1 |
 | $\Lambda$ | Likelihood of the match for every pair of match urns, $\Lambda_{jk} = L(D \mid j, k)$ | A.2 |
 | $L$ | Likelihood of the match for every pair of skill pools | A.2 |
