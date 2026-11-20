@@ -162,7 +162,7 @@ under chapter 8, and those for "Inference" under chapter 5.
     - The match urn couples the resolution and the size of form, and $M_s$ loosens that coupling.
     - Raising the shot-urn counts together makes the xG grid finer but narrows the spread.
     - The ceilings: binomial shots, the single-ball goal draw, and the with-replacement limit on form.
-    - The cost of more balls for the inference table (appendix A.3).
+    - The cost of more balls for the inference table (appendix A).
     - Why the variance decides how confident the inference is.
   - The findings so far, from three Premier League seasons, for the mismatch section:
     - Real total shots have a standard deviation of 6.0 against the model's 4.3, a variance above the mean, which
