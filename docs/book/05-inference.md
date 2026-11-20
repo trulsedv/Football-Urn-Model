@@ -164,7 +164,9 @@ G(s \mid s') = \frac{\exp\!\big(-(s - s')^2 / 2 (\sigma M_s)^2\big)}{\sum_{r=0}^
 \qquad s = 0, \dots, M_s
 $$
 
-The spread $\sigma$ is a share of the skill pool, so it keeps its meaning when $M_s$ changes. With $\sigma = 0$
+The spread $\sigma$ is a constant, the same between every pair of matches, whatever the time between them. A longer
+gap, such as an international break, is by choice not given a wider spread. The spread is a share of the skill pool,
+so it keeps its meaning when $M_s$ changes. With $\sigma = 0$
 the distribution narrows with every match and in the end becomes as certain as one likes. With $\sigma > 0$ it
 stops narrowing at a width where the widening between matches balances what each match reveals.
 
