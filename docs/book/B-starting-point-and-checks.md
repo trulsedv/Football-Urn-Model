@@ -13,22 +13,9 @@ its mean, variance and skewness, one parameter at a time, with each team's final
 what `uv run calibrate` does now (`src/football_urn_model/calibrate.py`). Its values also generate the simulated data
 of B.2.
 
-The values the model uses now are below. They were not fitted by the method of chapter 6; B.1 is to rerun the rough
-fit and replace them. The code holds the same values in `model_settings()` in `src/football_urn_model/simulate.py`.
-
-| Symbol | Meaning | Value now |
-| --- | --- | --- |
-| $M_s$, $m_s$ | Balls and red balls in a skill pool | 100; $m_s$ from 10 to 25 by team |
-| $M_u$ | Balls drawn from the skill pool into a match urn | 20 |
-| $M_t$, $m_t$ | Balls and red balls in the tempo urn | 4 and 1 |
-| $n$ | Rounds per match | 100 |
-| $K_s$ | Balls each team draws to decide who shoots | 3 |
-| $b$ | Big-chance margin | 2 |
-| $K_a$ | Balls drawn by the attacking team | 5 |
-| $K_d$ | Balls drawn by the defending team | 1 |
-| $x_H$ | Red h-marked balls in the home team's match urn | 1 |
-| $X_o$, $x_o$ | x-marked balls and red x-marked balls for an ordinary chance | 21 and 1 |
-| $X_b$, $x_b$ | x-marked balls and red x-marked balls for a big chance | 20 and 8 |
+The values the model uses now are in `model_settings()` in `src/football_urn_model/simulate.py`. They were not
+fitted by the method of chapter 6; B.1 is to rerun the rough fit and replace them, with the table of values produced
+by a command rather than typed in.
 
 ## B.2 Which parameters the fit can recover
 

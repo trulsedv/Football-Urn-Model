@@ -15,4 +15,4 @@ Planned sections:
 - **Where the structure cannot match the data.** For example the shot-count variance, which feeds chapter 9.
 - **The test on results.** The held-out matches against bookmaker odds and league averages (section 6.9).
 
-The parameter values the model uses now are in appendix B.1.
+The parameter values the model uses now are in `model_settings()`; see appendix B.1.

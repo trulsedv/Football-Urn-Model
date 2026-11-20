@@ -20,7 +20,7 @@ following it or pointing to it.
 | 8 | Use | – | Not started |
 | 9 | Known limitations | – | Not started |
 | A | Appendix: computation | [A-computation.md](A-computation.md) | First draft |
-| B | Appendix: starting point and checks on simulated data | [B-starting-point-and-checks.md](B-starting-point-and-checks.md) | Stub: plan and values now |
+| B | Appendix: starting point and checks on simulated data | [B-starting-point-and-checks.md](B-starting-point-and-checks.md) | Stub: plan |
 
 The order after chapter 4 was changed in [issue #4](https://github.com/trulsedv/football-urn-model/issues/4).
 Simulated matches cannot fit the model to real football, so the parameters are fitted to real data, and that has to
@@ -92,19 +92,22 @@ item below is to be decided or done as the chapters are written.
   distance; values outside the range count as the nearest end value.
 - [ ] **The simulated check** (appendix B.3). Needs inference code: the lookup table of appendix A, the update and
   the drift. $\sigma$ is now trained with the other parameters (section 6.7), so the check only verifies it, and
-  tests the assumption of independent skills of section 5.6. Section 5.7 still says the check sets $\sigma$; see the
-  comment on pull request #5.
+  tests the assumption of independent skills of section 5.6.
 - [x] **What the error function measures** (chapter 6). Decided: the ranked probability score of each team's shot
   count and each shot's xG, predicted before the match, on fixed xG bins, with a weight $\lambda$ between the two
   tuned on results (sections 6.3 to 6.5 and 6.9).
 - [ ] **Code for the proper fit** (chapter 6, run in chapter 7). The prediction of section 6.2, the score, and the
   search of section 6.8 on top of the inference code. `calibrate.py` stays as the rough fit of appendix B.1.
-- [ ] **Rerun the rough fit** (appendix B.1). Replace the values now with the output of `uv run calibrate`, so that
-  B.2 and chapter 7 start from it.
+- [ ] **Rerun the rough fit** (appendix B.1). Replace the values in `model_settings()` with the output of
+  `uv run calibrate`, so that B.2 and chapter 7 start from it. B.1's table of values is produced by a command, not
+  typed in.
+- [ ] **Choose $M_t$** (chapter 7). It sets the step $n / M_t$ in which the mean shot count can be fitted (section
+  6.7).
 - [ ] **Trainability study** (appendix B.2). Simulate as many matches as the real data has from B.1's values, fit
   from several random starts, and report which parameters come back. Rerun with chapter 7's fitted values.
 - [ ] **Bookmaker odds in the data** (section 6.9). The Understat data has no odds; find a source of home, draw and
-  away odds for the same matches.
+  away odds for the same matches, preferably closing odds, the stronger benchmark. Chapter 7 states which odds are
+  used and how the margin is removed, since that choice matters when the margin is large.
 - [ ] **Chapter 6 settings left to chapter 7.** The xG bin width, the matches left out at the start, the grid for
   $\lambda$, the step and smallest step for $\sigma$, and the sizes of the three data sets.
 - [ ] **Tempo pool** (chapter 9). The fixed tempo urn cannot give a shot-count variance above the mean; drawing each

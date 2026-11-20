@@ -107,13 +107,16 @@ E_{\text{match}} = \mathrm{RPS}(N_H) + \mathrm{RPS}(N_A) + \lambda \sum_{i=1}^{N
 $$
 
 where each $\mathrm{RPS}(v_i)$ scores shot $i$ against $P_H$ or $P_A$, by the team that took it. The home and away
-counts together carry which team shot, so who shoots needs no term of its own. The error of the fit is the sum over
+counts together carry which team shot, so who shoots needs no term of its own. The two counts are scored each on its
+own: given the match urns they compete for the same $n$ rounds, so they are not independent, and the sum of their
+two scores is not the score of their joint distribution. The error of the fit is the sum over
 the matches that count (section 6.6).
 
 The weight $\lambda$ sets how much the xG of the shots counts against the shot counts. The two kinds of score are not
 parts of one probability, so nothing in the scores themselves fixes their balance. $\lambda$ is a hyperparameter: a
 setting of the fit that the error cannot choose, since the error depends on it. It is tuned on the results (section
-6.9).
+6.9). Held-out shots and xG cannot tune it, since they would be scored by the same weighted sum, which depends on
+$\lambda$ itself; the results are scored without it.
 
 ## 6.6 The starting distribution
 
@@ -149,7 +152,9 @@ design, since the fit would push them without limit.
 **The rounds.** With the mean shot count $\mu = n p_t$ held fixed, the variance of the shot count is
 $\mu (1 - \mu / n)$, which grows with $n$ towards the ceiling $\mu$. Real shot counts vary more than their mean, so the
 fit would push $n$ towards infinity and $p_t$ towards zero. The rounds are kept, since the game is played round by
-round, and fixed at a value chosen in chapter 7; near the ceiling, a larger value changes the shot counts little.
+round, and fixed at a value chosen in chapter 7; near the ceiling, a larger value changes the shot counts little. The size
+of the tempo urn $M_t$ does not change the spread, but it sets how finely the mean shot count can be fitted: $m_t$
+moves in whole balls, so $\mu$ moves in steps of $n / M_t$.
 
 **The skill pool.** A larger skill pool gives more skill levels, and slightly more match-day form, since the match
 urn is drawn from it without replacement. Both make the fit a little better, so it would grow without limit. Fixing
