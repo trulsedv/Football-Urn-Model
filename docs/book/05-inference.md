@@ -141,7 +141,7 @@ strong home team against a strong away team can explain the same shots as a weak
 team, so the two teams' skills are correlated, and the next match starts as if they were not. The joint distribution
 of a whole league is not kept because it is too large: $T$ teams give $(M_s + 1)^T$ combinations. In a league the
 teams share opponents, so the correlations do not simply fade. The effect is expected to be small, and the check on
-simulated matches in chapter 7 tests it.
+simulated matches in appendix B tests it.
 
 ## 5.7 Between matches: skill drift
 
@@ -173,8 +173,8 @@ stops narrowing at a width where the widening between matches balances what each
 The drift is an assumption of the inference, not a part of the model, and it does not have to equal the change used
 when matches are simulated. Too little drift makes the inference slow to follow a real change in skill and too sure
 of an old estimate; too much makes it more uncertain than it needs to be. Choosing $\sigma$ is the main setting of
-the inference. Chapter 7 sets it, by a check on simulated matches run with the fitted parameters; the same check
-tests the assumption of independent skills.
+the inference. It is fitted together with the parameters of chapter 4, by the error function of chapter 6. The check
+on simulated matches in appendix B verifies the fitted $\sigma$ and tests the assumption of independent skills.
 
 ## 5.8 Before the first match
 
