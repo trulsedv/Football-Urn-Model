@@ -22,6 +22,7 @@ following it or pointing to it.
 | 10 | Known limitations | – | Not started |
 | A | Appendix: computation | [A-computation.md](A-computation.md) | First draft |
 | B | Appendix: starting point and checks on simulated data | [B-starting-point-and-checks.md](B-starting-point-and-checks.md) | Stub: plan |
+| C | Appendix: symbols | [C-symbols.md](C-symbols.md) | First draft |
 
 The order after chapter 4 was changed in [issue #4](https://github.com/trulsedv/football-urn-model/issues/4).
 Simulated matches cannot fit the model to real football, so the parameters are fitted to real data, and that has to
@@ -89,7 +90,11 @@ item below is to be decided or done as the chapters are written.
   for the shot probability per round, and $H$ and $A$ for home and away. Rename the symbols in the README,
   `design.md`, `considerations.md` and the code comments to match, or drop them there. Chapter 5 adds $D$, $\ell_H$,
   $\ell_A$, $L$, $\pi$, $u_r$, $w$, $G$ and $\sigma$, and appendix A adds $W$ and $\Lambda$; include them in the
-  sweep. The drift kernel is $G$, so that it does not clash with $K_s$, $K_a$ and $K_d$.
+  sweep. The drift kernel is $G$, so that it does not clash with $K_s$, $K_a$ and $K_d$. Appendix C lists every symbol of
+  chapters 4 to 7; keep it up to date, and resolve its clashes: $G$ for both the drift and the goals, $\sigma$ and
+  $\mu$ for both the drift spread or mean shot count and the xG moments of 4.5, $g$ for both the xG function of 4.5
+  and the home goals of 6.4, $c$ for both the cancelled balls and a shot count in 6.2, and $b$ for both the big-chance
+  margin and a bin in 7.4.
 
 ## To do: open points from chapter 5 onwards
 
