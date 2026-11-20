@@ -16,23 +16,23 @@ This chapter describes how football is assumed to work before any modelling. Ran
 
 ## 3. From theory to model
 
-This chapter records the simplifications and the reasons for them. Key choices: xG rather than goals is the observable, because finishing is treated as random; measured xG is taken as true xG in this version; teams do not change behaviour with the score; tempo is independent of skill. Each choice is stated as an assumption so a reader can judge its cost.
+This chapter records the simplifications and the reasons for them. Key choices: xG rather than goals is the observable, because finishing is treated as random; measured xG is taken as true xG in this version; teams do not change behaviour with the score, so every round of a match is identical and independent given the two match urns; tempo is independent of skill. It also maps the urn chain onto chapter 2's three layers of randomness. Each choice is stated as an assumption so a reader can judge its cost.
 
 ## 4. Model mechanics
 
-This chapter specifies the urn chain exactly. A team's skill pool is drawn into a match urn, with marked home-advantage balls added for the home side. Each round a neutral urn decides whether a shot occurs; the match urns decide who gets it; an attack-versus-defence draw sets whether it is a big or normal chance and how many attacker balls survive; the resulting shot urn's red-to-white ratio is the shot's xG; a final draw decides the goal. The chapter closes with the resolution-versus-variance tension: ball counts set xG resolution, the number drawn sets variance, and the two must be tuned separately.
+This chapter specifies the urn chain exactly. A team's skill pool is drawn into a match urn, with marked home-advantage balls added for the home side. Each round the tempo urn decides whether a shot occurs; the match urns decide who gets it; an attack-versus-defence draw sets whether it is a big or normal chance and how many attacker balls survive; the resulting shot urn's red-to-white ratio is the shot's xG; a final draw decides the goal. For each step the chapter gives the mean, variance and skewness given the outcome of the step before. It does not combine the steps, and it has no worked example.
 
-## 5. Fitting the structure
+## 5. Inference
 
-This chapter shows how real data shaped the mechanics, one section per phase. For each observable (shots per game, home/away shot share, xG per shot) it reports mean, variance and skew across a grid of skill levels, using three Premier League seasons with final points as the skill proxy. The flat relationship between shot count and skill is what motivates the neutral urn. The chapter is explicit that this exercise fixed structure only, not final parameter values.
+This chapter presents the skill update as a forward-only Bayesian calculation. For every candidate pair of skill pools, the model gives the probability of the observed match, shot by shot: which team shot and with what xG. Multiplied by the prior and normalised, this yields the posterior. Because the shots are independent given the match urns, the likelihood is a sum over match urns of products over shots, computed exactly from chapter 4's equations, without simulation; appendix A shows how. The chapter also covers matching observed xG to the values the urns can produce, by splitting each shot between its two neighbouring values, the skill drift between matches as a spread around the current count, and the starting prior. Each assumption is stated once, in a marked paragraph.
 
-## 6. Inference
+## 6. Fitting method
 
-This chapter presents the skill update as a forward-only Bayesian calculation. For every candidate pair of red-ball counts, the model gives the probability of the observed match (shot share and each team's xG, by total or shot by shot); multiplied by the prior and normalised, this yields the posterior. Because rounds are identical and independent, every cell can be computed exactly and stored in a lookup table. One worked cell (six versus six) is shown to make the method concrete; full tables are left to chapter 7.
+This chapter sets out how the model's parameters are fitted to real data: the error function, measured on what the model predicts for real matches once the inference has estimated each team's skill, and how it is minimised. Skill is not observed, so the fit has to run through the inference of chapter 5.
 
-## 7. Validation
+## 7. Fitting to real data
 
-This chapter tests the inference on synthetic data where the truth is known. Twenty artificial teams play thousands of matches while their red-ball counts drift along slow curves of differing period, amplitude and phase; the inference is run on the results and judged by how well it recovers the known counts. A full example table appears here. The chapter is clear about what this does and does not establish: it tunes the inference under a correct forward model, and says nothing about whether the mechanics match real football.
+This chapter applies the method of chapter 6 to real matches. It opens with a rough fit that matches the mean, variance and skewness of each step to three Premier League seasons, with final points as the skill proxy, as the starting point. The flat relationship between shot count and skill, which motivates the tempo urn, is shown here. The fit against the error function follows, with its results and the places where the structure of chapter 4 cannot match the data, such as the variance of the shot count. It ends with a check of the inference on simulated matches, run with the fitted parameters, where twenty teams' red balls drift along slow curves: the inference should recover the known counts, with honest intervals. The check sets the assumed drift, and says nothing about whether the mechanics match real football.
 
 ## 8. Use
 
@@ -40,4 +40,8 @@ This chapter shows what the skill posteriors are for. Match outcome probabilitie
 
 ## 9. Known limitations
 
-This chapter lists where the model stops, for anyone who wants to build on it. Game-state effects on play; tempo that depends on the teams; per-team finishing quality and xG-provider error; tactical mismatch as a pairwise effect; the circularity and cross-season comparability of the points proxy; the ceiling on variance from single-ball draws.
+This chapter lists where the model stops, for anyone who wants to build on it. Game-state effects on play; tempo that depends on the teams; per-team finishing quality and xG-provider error; tactical mismatch as a pairwise effect; the circularity and cross-season comparability of the points proxy; the ceiling on variance from single-ball draws; the gaps the fit of chapter 7 finds.
+
+## Appendix A. Computation
+
+How the likelihood of chapter 5 is computed exactly and cheaply: the lookup table indexed by the two match urns, the matrix form of the sum over match urns, log-scaling, and the cost of larger urns and skill pools.
