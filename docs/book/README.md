@@ -15,18 +15,20 @@ following it or pointing to it.
 | 3 | From theory to model | – | Not started |
 | 4 | Model mechanics | [04-model-mechanics.md](04-model-mechanics.md) | First draft |
 | 5 | Inference | [05-inference.md](05-inference.md) | First draft |
-| 6 | Fitting method | – | Not started |
-| 7 | Fitting to real data | [07-fitting-to-real-data.md](07-fitting-to-real-data.md) | Stub: starting values only |
+| 6 | Fitting method | [06-fitting-method.md](06-fitting-method.md) | First draft |
+| 7 | Fitting to real data | [07-fitting-to-real-data.md](07-fitting-to-real-data.md) | Stub: planned sections |
 | 8 | Use | – | Not started |
 | 9 | Known limitations | – | Not started |
 | A | Appendix: computation | [A-computation.md](A-computation.md) | First draft |
+| B | Appendix: starting point and checks on simulated data | [B-starting-point-and-checks.md](B-starting-point-and-checks.md) | Stub: plan and values now |
 
 The order after chapter 4 was changed in [issue #4](https://github.com/trulsedv/football-urn-model/issues/4).
 Simulated matches cannot fit the model to real football, so the parameters are fitted to real data, and that has to
 come after the inference, since skill is not observed. Chapter 5 is the inference. Chapter 6 is the method of the fit:
-the error function and how to minimise it. Chapter 7 applies it to real data, starting from a rough fit of the mean,
-variance and skewness of each step, and ends with the check of the inference on simulated matches, run with the
-fitted parameters (moved there from chapter 5 in pull request #5, for now).
+the error function and how to minimise it. Chapter 7 runs it on real data and reports the numbers. Appendix B holds the rough
+fit of the mean, variance and skewness of each step, which is the starting point (B.1), a test on simulated data of
+which parameters the fit can recover (B.2), and the check of the inference on simulated matches, run with the fitted
+parameters (B.3).
 
 ## Conventions
 
@@ -39,6 +41,8 @@ fitted parameters (moved there from chapter 5 in pull request #5, for now).
 - **Every number is reproducible.** Every number in chapter 7 and the appendix comes from a command in the repo.
   The equations of chapter 5 are checked by `uv run python scripts/check_chapter5.py`, which uses the parameters in
   `model_settings()` and so reruns when they change.
+- **Theory, then doing.** Chapter 6 decides how the fit works and which parameters are fixed by design; chapter 7
+  only runs it, states the fixed values and reports the numbers.
 
 ## To do: revise the documentation around the book
 
@@ -86,16 +90,25 @@ item below is to be decided or done as the chapters are written.
 
 - [x] **Rule for observed xG** (section 5.5). Decided: split between the two neighbouring values, weighted by
   distance; values outside the range count as the nearest end value.
-- [ ] **The simulated check** (chapter 7). Needs inference code: the lookup table of appendix A, the update and the
-  drift. It has two jobs: setting the drift spread $\sigma$ of section 5.7, and testing the assumption of
-  independent skills of section 5.6. Its loop: the fit runs through the inference, which needs a drift, so chapter 7
-  starts from a guessed $\sigma$ and refines it after the fit.
-- [ ] **What the error function measures** (chapter 6). For example the result probabilities or the xG of the next
-  match, scored against what happened. One option is to measure against the observables of goal 1 in `design.md`
-  (shots, xG and results), so that every mismatch lands in a named place in chapter 7.
-- [ ] **Code for the proper fit** (chapter 7). `calibrate.py` is greedy one-parameter moment matching: it stays as
-  the rough fit that gives the starting point. The fit against the error function needs new code, written once
-  chapter 6 has chosen the error function.
+- [ ] **The simulated check** (appendix B.3). Needs inference code: the lookup table of appendix A, the update and
+  the drift. $\sigma$ is now trained with the other parameters (section 6.7), so the check only verifies it, and
+  tests the assumption of independent skills of section 5.6. Section 5.7 still says the check sets $\sigma$; see the
+  comment on pull request #5.
+- [x] **What the error function measures** (chapter 6). Decided: the ranked probability score of each team's shot
+  count and each shot's xG, predicted before the match, on fixed xG bins, with a weight $\lambda$ between the two
+  tuned on results (sections 6.3 to 6.5 and 6.9).
+- [ ] **Code for the proper fit** (chapter 6, run in chapter 7). The prediction of section 6.2, the score, and the
+  search of section 6.8 on top of the inference code. `calibrate.py` stays as the rough fit of appendix B.1.
+- [ ] **Rerun the rough fit** (appendix B.1). Replace the values now with the output of `uv run calibrate`, so that
+  B.2 and chapter 7 start from it.
+- [ ] **Trainability study** (appendix B.2). Simulate as many matches as the real data has from B.1's values, fit
+  from several random starts, and report which parameters come back. Rerun with chapter 7's fitted values.
+- [ ] **Bookmaker odds in the data** (section 6.9). The Understat data has no odds; find a source of home, draw and
+  away odds for the same matches.
+- [ ] **Chapter 6 settings left to chapter 7.** The xG bin width, the matches left out at the start, the grid for
+  $\lambda$, the step and smallest step for $\sigma$, and the sizes of the three data sets.
+- [ ] **Tempo pool** (chapter 9). The fixed tempo urn cannot give a shot-count variance above the mean; drawing each
+  match's tempo urn from a larger pool, as in `docs/considerations.md`, could. Kept as a known limitation for now.
 - [ ] **Assumption list** (chapter 9). List every "**Assumption (name).**" paragraph of the book, with how each is
   checked. Chapter 5 has four: observed xG, independent skills, drift and starting distribution. Chapters 3 and 4
   should mark theirs the same way when they are revised.
@@ -154,7 +167,7 @@ under chapter 7, and those for "Inference" under chapter 5.
       ordinary chance and from 0.32 to 0.52 for a big chance.
   - The size of the skill pool. The starting values give about 16 skill levels, too few for real teams; a larger
     pool only grows $W$ (appendix A) but changes match-day form, so it is fitted with the rest.
-  - The check of the inference on simulated matches, moved from section 5.10 for now. About twenty teams play
+  - The check of the inference on simulated matches, moved from section 5.10, now appendix B.3. About twenty teams play
     thousands of matches by chapter 4's rules, each team's skill pool changing slowly along its own curve (for
     example a sine wave with its own period, amplitude and phase). The inference is run on the simulated shots alone.
     Measured: whether the centre of each distribution follows the true red balls; whether an 80% interval holds the
