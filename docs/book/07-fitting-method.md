@@ -160,8 +160,8 @@ gradient. Each try rebuilds the tables of appendix A and runs the inference thro
 The search starts from the rough fit of appendix B.1. In each round, every parameter of the table in section 7.7 is
 tried one step up and one step down. The best single step is kept, unless moving every parameter that improved at
 once lowers the error more, in which case that combined step is kept. A step of a share is the smallest change that
-moves a ball, and $\sigma$ is searched with a step that shrinks once no step lowers the error. The search stops when
-no step lowers the error.
+moves a ball. When no step lowers the error, the step for $\sigma$ is made smaller and the search goes on; it stops
+when no step lowers the error and the step for $\sigma$ is at its smallest size.
 
 A search by single steps stops wherever no single step helps, even if two parameters moved together would. The
 search is therefore run from several starting points. If they end in the same place, local minima do not matter in

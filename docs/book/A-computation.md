@@ -45,7 +45,8 @@ $$
 $$
 
 where $Q$ holds one number for each pair of match urns and $I'$ is a matrix of ones. Both are zero in the all-red
-cell, which leaves that pair out and scales the rest (section 6.1). For a shot count, $Q$ holds the binomial
+cell. The denominator is then the total weight of the pairs that count, so the quotient is the mixture over the scaled
+weights $\omega(j, k)$ of section 6.1. For a shot count, $Q$ holds the binomial
 probabilities of section 6.2; for the xG of a shot, $\ell_H(v \mid j, k)$ in the numerator and $q(j, k)$ in the
 denominator in place of $I'$ (section 6.3); for a result, its probability given the match urns (section 6.4). These
 entries depend only on the parameters, so they are tabulated with the lookup table and reused for every match.
