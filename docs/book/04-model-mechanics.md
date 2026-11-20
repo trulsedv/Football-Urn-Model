@@ -17,7 +17,7 @@ The model uses four kinds of urn and two kinds of marked ball, and every ball is
 The symbols follow one pattern. $M$ and $m$ count the balls and the red balls an urn holds, $K$ and $k$ the balls
 and the red balls a team draws, and $X$ and $x$ the marked balls and the red marked balls. The last column says
 whether a symbol is a parameter of the model, a team's skill, or drawn during a match. The chapter holds for any
-values of the parameters; chapter 7 fits them to real data.
+values of the parameters; chapter 8 fits them to real data.
 
 | Symbol | Meaning | Kind |
 | --- | --- | --- |

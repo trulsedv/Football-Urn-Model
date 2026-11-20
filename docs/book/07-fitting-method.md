@@ -1,11 +1,11 @@
-# 6. Fitting method
+# 7. Fitting method
 
 This chapter sets out how the parameters of chapter 4 and the drift spread of chapter 5 are fitted to real matches.
 The fit chooses the parameters whose predictions of real matches score best, with each match predicted before it is
 played. The chapter defines the error, says which parameters are trained and which are fixed by design, and gives
-the search that minimises the error. Chapter 7 runs the method on real data.
+the search that minimises the error. Chapter 8 runs the method on real data.
 
-## 6.1 Two levels
+## 7.1 Two levels
 
 The fit works on two levels. The outer level chooses the parameters shared by all teams: the ball counts of chapter
 4 and the drift spread $\sigma$ of section 5.7, the only parameter of the inference. The inner level runs the
@@ -16,50 +16,28 @@ parameters are being tried, and so does the range they fall in. If the other par
 to produce real-looking shots change with them, and the inferred skills move to wherever fits. The starting
 distribution of section 5.8 only has to be wide enough to cover where they end up.
 
-## 6.2 What is predicted
+## 7.2 What is predicted
 
 Each match is predicted from the skill distributions as they stand just before it, and only then used to update
 them. The inference runs through the matches in time order. Before each match it widens both teams' distributions by
-the drift (section 5.7), predicts the match, scores the prediction against what happened, and updates the
+the drift (section 5.7), predicts the match (chapter 6), scores the prediction against what happened, and updates the
 distributions with the match (section 5.6). Every prediction therefore uses only earlier matches.
 
-Two things are predicted for each match: each team's number of shots, and the xG of each shot. Goals and results
-are not part of the fit. They are much noisier than shots and xG, and they are used to tune and test the fit instead
-(section 6.9).
+Two of the predictions of chapter 6 are scored: each team's number of shots (section 6.2) and the xG of each shot
+(section 6.3). Goals and results are not part of the fit. They are much noisier than shots and xG, and they are used
+to tune and test the fit instead (section 7.9).
 
-A team's number of shots, given the match urns, is binomial. Each round gives a home shot with probability $p_t q$
-and an away shot with probability $p_t (1 - q)$, with $p_t$ of section 4.3 and $q$ of section 4.4, so $N_H$ is
-binomial with $n$ rounds and probability $p_t q$, and $N_A$ with $p_t (1 - q)$. The prediction mixes this over the
-match urns and over the skill distributions:
+Each shot is scored against $P_H$ or $P_A$ on its own, although the shots of one match share their match urns. That
+suits a score, since it asks only how well each shot was foreseen.
 
-$$
-P(N_H = c) = \sum_{s_H} \sum_{s_A} \pi_H(s_H)\, \pi_A(s_A) \sum_j \sum_k P(m_{u,H} = j \mid s_H)\,
-P(m_{u,A} = k \mid s_A)\, \binom{n}{c} \big(p_t q\big)^c \big(1 - p_t q\big)^{n - c}
-$$
-
-with $q$ computed for the match urns $j$ and $k$, and the same for $N_A$ with $1 - q$.
-
-The xG of a home shot is predicted the same way, from $\ell_H$ of section 5.2. Given that a shot is taken by the home
-team, the match urns are weighted by how likely they make a home shot:
-
-$$
-P_H(v) = \frac{\sum_{s_H, s_A} \pi_H(s_H)\, \pi_A(s_A) \sum_{j, k} P(m_{u,H} = j \mid s_H)\, P(m_{u,A} = k \mid s_A)\,
-\ell_H(v \mid j, k)}{\sum_{s_H, s_A} \pi_H(s_H)\, \pi_A(s_A) \sum_{j, k} P(m_{u,H} = j \mid s_H)\,
-P(m_{u,A} = k \mid s_A)\, q(j, k)}
-$$
-
-and $P_A(v)$ the same with $\ell_A$ and $1 - q$. Each shot is scored against this distribution on its own. The shots
-of one match share their match urns, so they are not independent in the prediction; scoring each against the
-distribution before the match ignores that, which suits a score, since it asks only how well each shot was foreseen.
-
-## 6.3 Bins
+## 7.3 Bins
 
 The predictions are scored on fixed bins of xG, the same for every set of parameters. The values the urns can
 produce depend on the parameters (section 5.5), so two sets of parameters would otherwise be scored on different
-values, and a set with finer values would spread its probability thinner and look worse for that reason alone. With
-fixed bins, the model's probability of a bin is the sum of $P_H(v)$ over the model values $v$ in it, and each real
-shot falls into one bin. The bins run from the lowest to the highest xG in the data; their width is a choice made in
-chapter 7.
+values, and a set with finer values would spread its probability thinner and look worse for that reason alone. The bins
+cover the whole range of xG, from 0 to 1, with a width chosen in chapter 8, so they depend neither on the model nor on
+the data. The model's probability of a bin is the sum of $P_H(v)$ over the model values $v$ in it, and each real shot
+falls into one bin.
 
 A bin that holds no model value gets probability zero, and the score of the next section handles this without any
 special rule. The shot counts need no bins of their own: each count, from 0 to $n$, is its own bin.
@@ -67,7 +45,7 @@ special rule. The shot counts need no bins of their own: each count, from 0 to $
 The bins are used only for scoring. The update after the match still uses the split of section 5.5, which matches
 each observed xG to the model's own values.
 
-## 6.4 The ranked probability score
+## 7.4 The ranked probability score
 
 Each prediction is scored by the ranked probability score, which compares the predicted and the observed cumulative
 distribution over ordered bins. With bins $1, \dots, B$ in order, predicted probabilities $P_1, \dots, P_B$, and the
@@ -94,11 +72,11 @@ The score has three properties the fit needs:
 The last property is the reason the logarithmic score is not used. The logarithmic score, minus the log of the
 probability given to what happened, is infinite for an observation the model gave probability zero, and very large
 for one it gave very little. The structure of chapter 4 has known limits, such as its range of xG and the spread of
-its shot counts (chapter 9). Under the logarithmic score, the few shots the structure can barely produce would steer
+its shot counts (chapter 10). Under the logarithmic score, the few shots the structure can barely produce would steer
 the parameters at the cost of fitting the common shots worse. The ranked probability score fits the parameters to
 what the structure can describe, and leaves the rest to the known limitations.
 
-## 6.5 The error
+## 7.5 The error
 
 The error of one match adds the scores of its two shot counts and of its shots:
 
@@ -110,24 +88,24 @@ where each $\mathrm{RPS}(v_i)$ scores shot $i$ against $P_H$ or $P_A$, by the te
 counts together carry which team shot, so who shoots needs no term of its own. The two counts are scored each on its
 own: given the match urns they compete for the same $n$ rounds, so they are not independent, and the sum of their
 two scores is not the score of their joint distribution. The error of the fit is the sum over
-the matches that count (section 6.6).
+the matches that count (section 7.6).
 
 The weight $\lambda$ sets how much the xG of the shots counts against the shot counts. The two kinds of score are not
 parts of one probability, so nothing in the scores themselves fixes their balance. $\lambda$ is a hyperparameter: a
 setting of the fit that the error cannot choose, since the error depends on it. It is tuned on the results (section
-6.9). Held-out shots and xG cannot tune it, since they would be scored by the same weighted sum, which depends on
+7.9). Held-out shots and xG cannot tune it, since they would be scored by the same weighted sum, which depends on
 $\lambda$ itself; the results are scored without it.
 
-## 6.6 The starting distribution
+## 7.6 The starting distribution
 
 The starting distribution of section 5.8 is a choice, not a result, and it should not pull the fit. A team's first
 matches are predicted mostly from that choice, so their scores say more about the choice than about the parameters.
 
 The error therefore leaves out each team's first matches, or the inference starts a season before the matches the
 error counts. Either way, the matches the error counts are predicted from distributions the data has already shaped.
-How many matches are left out is set in chapter 7.
+How many matches are left out is set in chapter 8.
 
-## 6.7 What is trained and what is fixed
+## 7.7 What is trained and what is fixed
 
 Most parameters are searched not as ball counts but as shares, so that each search direction changes one thing about
 the model. A share is turned back into balls by rounding, within the limits the rules of chapter 4 set: a draw cannot
@@ -152,7 +130,7 @@ design, since the fit would push them without limit.
 **The rounds.** With the mean shot count $\mu = n p_t$ held fixed, the variance of the shot count is
 $\mu (1 - \mu / n)$, which grows with $n$ towards the ceiling $\mu$. Real shot counts vary more than their mean, so the
 fit would push $n$ towards infinity and $p_t$ towards zero. The rounds are kept, since the game is played round by
-round, and fixed at a value chosen in chapter 7; near the ceiling, a larger value changes the shot counts little. The size
+round, and fixed at a value chosen in chapter 8; near the ceiling, a larger value changes the shot counts little. The size
 of the tempo urn $M_t$ does not change the spread, but it sets how finely the mean shot count can be fitted: $m_t$
 moves in whole balls, so $\mu$ moves in steps of $n / M_t$.
 
@@ -165,7 +143,7 @@ urn's, because the attacker's balls are added to the same shot urn: the attacker
 much a team's skill moves the xG. Searched as red balls and white balls, a level and a sensitivity are mixed in every
 step, and the error forms long valleys along which many combinations score nearly the same. Searched as the two
 shares, they are separate directions. With the shares fixed, $K_a$ mostly sets how fine the xG values are, which the
-fixed bins of section 6.3 do not reward for its own sake.
+fixed bins of section 7.3 do not reward for its own sake.
 
 Some links remain. The margin share removes most of the dependence of $b$ on $K_s$ but not all, since more draws also
 make the difference in red balls less noisy. A strong who-shoots draw with little match-day form can look a little
@@ -174,28 +152,23 @@ like a weak draw with more form, though $M_u$ also affects the xG, which should 
 Appendix B.2 tests, on simulated data, which of these parameters the data can pin down. A parameter it cannot recover
 is fixed by design as well.
 
-## 6.8 The search
+## 7.8 The search
 
 The error is minimised by a search over whole steps, since most parameters are ball counts and the error has no
-gradient. Each try rebuilds the tables of appendix A and runs the inference through every match, so the search has
-to make few tries.
+gradient. Each try rebuilds the tables of appendix A and runs the inference through every match.
 
-The search starts from the rough fit of appendix B.1 and repeats one round until no step lowers the error:
-
-1. For each parameter in the table of section 6.7, try one step up and one step down, and note the change in the
-   error. For a share, a step is the smallest change that moves a ball; for $\sigma$, a step of a chosen size.
-2. Try the combined step: every parameter whose step lowered the error moves at once.
-3. Keep the combined step if it lowers the error more than the best single step; otherwise keep the best single step.
-
-When no single step lowers the error, the step for $\sigma$ is halved and the search goes on, until the step reaches
-a chosen smallest size.
+The search starts from the rough fit of appendix B.1. In each round, every parameter of the table in section 7.7 is
+tried one step up and one step down. The best single step is kept, unless moving every parameter that improved at
+once lowers the error more, in which case that combined step is kept. A step of a share is the smallest change that
+moves a ball, and $\sigma$ is searched with a step that shrinks once no step lowers the error. The search stops when
+no step lowers the error.
 
 A search by single steps stops wherever no single step helps, even if two parameters moved together would. The
 search is therefore run from several starting points. If they end in the same place, local minima do not matter in
 practice. If they do not, diagonal steps, in which two parameters move together, are added for the pairs of section
-6.7 that are still linked.
+7.7 that are still linked.
 
-## 6.9 Tuning and testing on results
+## 7.9 Tuning and testing on results
 
 The matches are split in time order into three sets: one to train on, one to tune the weight $\lambda$, and one held
 out for the final test. The inference runs through all three in order, so the skills keep updating, but the
@@ -203,7 +176,7 @@ parameters are fitted on the first set alone.
 
 **Tuning.** For each value of $\lambda$ on a grid, the parameters are fitted on the training set. Each match of the
 tuning set is then predicted as a result, home win, draw or away win, from the skill distributions before it
-(chapter 8), and scored by the ranked probability score over those three ordered outcomes. The value of $\lambda$
+(section 6.4), and scored by the ranked probability score over those three ordered outcomes. The value of $\lambda$
 with the lowest total score is kept.
 
 **Testing.** The fitted model predicts the results of the held-out set, scored the same way, and is compared with two

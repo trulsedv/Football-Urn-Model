@@ -1,14 +1,16 @@
 # Appendix A. Computation
 
-This appendix shows how the likelihood of chapter 5 is computed. It adds nothing to the maths: every quantity here
-is defined in chapters 4 and 5, and the appendix only says how to compute them exactly and cheaply.
+This appendix shows how the likelihood of chapter 5 and the predictions of chapter 6 are computed. It adds nothing to
+the maths: every quantity here is defined in chapters 4 to 6, and the appendix only shows how they are computed
+exactly and cheaply.
 
 ## A.1 The lookup table
 
 Everything the inference needs from chapter 4 fits in one table, computed once per set of parameters. The table has
 one cell for each pair of match urns $j$ and $k$, from 0 to $M_u$ red balls each, so $(M_u + 1)^2$ cells. Each cell
 holds $\ell_H(u \mid j, k)$ and $\ell_A(u \mid j, k)$ of section 5.2 for every value $u$ in the list of section 5.5.
-With $K_d = 1$, each kind of shot gives at most $2K_a + 1$ values, so the list has at most $2(2K_a + 1)$ entries.
+Each kind of shot gives at most one value for each pair of the attacker's red balls $k_a$ and the cancelled balls
+$c \le \min(k_a, K_d)$, so the list is short whatever the parameters.
 
 The cell where both match urns hold only red balls, $j = k = M_u$, is given a likelihood of zero (section 5.4).
 
@@ -33,9 +35,17 @@ The products of many small factors are taken as sums of logarithms. Before the m
 so that its largest entry is one; the scale cancels when the distribution after the match is normalised (section
 5.6).
 
-## A.3 Cost
+## A.3 The predictions
 
-The size of the skill pool costs little. The table is indexed by the match urns, so a larger skill pool only adds
-rows to $W$, and the update of section 5.6 works on $(M_s + 1)^2$ pairs of skill pools. A larger match urn costs
-more, since the number of cells grows with the square of $M_u + 1$. A larger list of xG values, for a finer xG, adds
-entries to every cell. All of it is computed once per set of parameters.
+The predictions of chapter 6 use the same tables. The weights of section 6.1 are the vectors
+$\omega_H = \pi_H^\mathsf{T} W$ and $\omega_A = \pi_A^\mathsf{T} W$, and every prediction has the form
+
+$$
+\frac{\omega_H\, Q\, \omega_A^\mathsf{T}}{\omega_H\, I'\, \omega_A^\mathsf{T}}
+$$
+
+where $Q$ holds one number for each pair of match urns and $I'$ is a matrix of ones. Both are zero in the all-red
+cell, which leaves that pair out and scales the rest (section 6.1). For a shot count, $Q$ holds the binomial
+probabilities of section 6.2; for the xG of a shot, $\ell_H(v \mid j, k)$ in the numerator and $q(j, k)$ in the
+denominator in place of $I'$ (section 6.3); for a result, its probability given the match urns (section 6.4). These
+entries depend only on the parameters, so they are tabulated with the lookup table and reused for every match.
