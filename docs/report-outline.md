@@ -24,7 +24,7 @@ This chapter specifies the urn chain exactly. A team's skill pool is drawn into 
 
 ## 5. Inference
 
-This chapter presents the skill update as a forward-only Bayesian calculation. For every candidate pair of skill pools, the model gives the probability of the observed match, shot by shot: which team shot and with what xG. Multiplied by the prior and normalised, this yields the posterior. Because the shots are independent given the match urns, the likelihood is a sum over match urns of products over shots, computed exactly from a lookup table indexed by the two match urns. The chapter also covers matching observed xG to the values the urns can produce, by splitting each shot between its two neighbouring values, the skill drift between matches as a spread around the current count, and the starting prior.
+This chapter presents the skill update as a forward-only Bayesian calculation. For every candidate pair of skill pools, the model gives the probability of the observed match, shot by shot: which team shot and with what xG. Multiplied by the prior and normalised, this yields the posterior. Because the shots are independent given the match urns, the likelihood is a sum over match urns of products over shots, computed exactly from chapter 4's equations, without simulation; appendix A shows how. The chapter also covers matching observed xG to the values the urns can produce, by splitting each shot between its two neighbouring values, the skill drift between matches as a spread around the current count, and the starting prior. Each assumption is stated once, in a marked paragraph.
 
 ## 6. Fitting method
 
@@ -41,3 +41,7 @@ This chapter shows what the skill posteriors are for. Match outcome probabilitie
 ## 9. Known limitations
 
 This chapter lists where the model stops, for anyone who wants to build on it. Game-state effects on play; tempo that depends on the teams; per-team finishing quality and xG-provider error; tactical mismatch as a pairwise effect; the circularity and cross-season comparability of the points proxy; the ceiling on variance from single-ball draws; the gaps the fit of chapter 7 finds.
+
+## Appendix A. Computation
+
+How the likelihood of chapter 5 is computed exactly and cheaply: the lookup table indexed by the two match urns, the matrix form of the sum over match urns, log-scaling, and the cost of larger urns and skill pools.

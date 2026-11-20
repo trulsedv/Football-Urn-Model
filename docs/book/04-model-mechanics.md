@@ -15,24 +15,25 @@ The model uses four kinds of urn and two kinds of marked ball, and every ball is
 | Shot urn | The attacking team's remaining balls and a set of x-marked balls | One shot |
 
 The symbols follow one pattern. $M$ and $m$ count the balls and the red balls an urn holds, $K$ and $k$ the balls
-and the red balls a team draws, and $X$ and $x$ the marked balls and the red marked balls. The starting values are
-the model's current values and are not fitted. Chapter 7 fits them to real data.
+and the red balls a team draws, and $X$ and $x$ the marked balls and the red marked balls. The last column says
+whether a symbol is a parameter of the model, a team's skill, or drawn during a match. The chapter holds for any
+values of the parameters; chapter 7 fits them to real data.
 
-| Symbol | Meaning | Starting value |
+| Symbol | Meaning | Kind |
 | --- | --- | --- |
-| $M_s$, $m_s$ | Balls and red balls in a skill pool | 100; $m_s$ from 10 to 25 by team |
-| $M_u$, $m_u$ | Balls drawn from the skill pool into a match urn, and red balls among them | 20; $m_u$ is drawn |
-| $M_t$, $m_t$ | Balls and red balls in the tempo urn | 4 and 1 |
-| $n$ | Rounds per match | 100 |
-| $N$, $N_H$, $N_A$ | Shots in a match: total, home, away | drawn |
-| $K_s$, $k_s$ | Balls each team draws to decide who shoots, and red balls among them | 3; $k_s$ is drawn |
-| $b$ | Big-chance margin | 2 |
-| $K_a$, $k_a$ | Balls drawn by the attacking team, and red balls among them | 5; $k_a$ is drawn |
-| $K_d$, $k_d$ | Balls drawn by the defending team, and red balls among them | 1; $k_d$ is drawn |
-| $c$ | Red balls cancelled, $c = \min(k_a, k_d)$ | drawn |
-| $x_H$ | Red h-marked balls in the home team's match urn | 1 |
-| $X_o$, $x_o$ | x-marked balls and red x-marked balls for an ordinary chance | 21 and 1 |
-| $X_b$, $x_b$ | x-marked balls and red x-marked balls for a big chance | 20 and 8 |
+| $M_s$, $m_s$ | Balls and red balls in a skill pool | Parameter; $m_s$ is the team's skill |
+| $M_u$, $m_u$ | Balls drawn from the skill pool into a match urn, and red balls among them | Parameter; $m_u$ is drawn |
+| $M_t$, $m_t$ | Balls and red balls in the tempo urn | Parameters |
+| $n$ | Rounds per match | Parameter |
+| $N$, $N_H$, $N_A$ | Shots in a match: total, home, away | Drawn |
+| $K_s$, $k_s$ | Balls each team draws to decide who shoots, and red balls among them | Parameter; $k_s$ is drawn |
+| $b$ | Big-chance margin | Parameter |
+| $K_a$, $k_a$ | Balls drawn by the attacking team, and red balls among them | Parameter; $k_a$ is drawn |
+| $K_d$, $k_d$ | Balls drawn by the defending team, and red balls among them | Parameter; $k_d$ is drawn |
+| $c$ | Red balls cancelled, $c = \min(k_a, k_d)$ | Drawn |
+| $x_H$ | Red h-marked balls in the home team's match urn | Parameter, at least 1 |
+| $X_o$, $x_o$ | x-marked balls and red x-marked balls for an ordinary chance | Parameters |
+| $X_b$, $x_b$ | x-marked balls and red x-marked balls for a big chance | Parameters |
 | $X$, $x$ | Whichever x-marked set the shot uses | – |
 
 The subscripts $H$ and $A$ mark the home and away team, for example $m_{u,H}$ and $m_{u,A}$ for the red balls each
